@@ -9,13 +9,23 @@ pipeline {
             }
         }
 
-        stage('Build') {
+        // stage('Build') {
+        //     steps {
+        //         // Check out the code from the repository
+        //         checkout scm
+
+        //         // Run Maven clean install
+        //         sh 'mvn clean package'
+        //     }
+        // }
+
+        stage('compile') {
             steps {
                 // Check out the code from the repository
                 checkout scm
 
                 // Run Maven clean install
-                sh 'mvn clean package'
+                sh 'mvn compile'
             }
         }
 
