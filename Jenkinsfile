@@ -36,6 +36,16 @@ pipeline {
                     }
                 }
         }
+
+        stage('test') {
+            steps {
+                // Check out the code from the repository
+                checkout scm
+
+                // Run Maven clean install
+                sh 'mvn test'
+            }
+        }
         
 
 
