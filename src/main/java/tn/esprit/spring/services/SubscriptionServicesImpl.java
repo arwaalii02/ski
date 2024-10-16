@@ -60,6 +60,11 @@ public class SubscriptionServicesImpl implements ISubscriptionServices{
     }
 
     @Override
+    public List<Subscription> retrieveAllSubscriptions() {
+        return subRepository.findAll();
+    }
+
+    @Override
     @Scheduled(cron = "*/30 * * * * *") /* Cron expression to run a job every 30 secondes */
     public void retrieveSubscriptions() {
         for (Subscription sub: subscriptionRepository.findDistinctOrderByEndDateAsc()) {
