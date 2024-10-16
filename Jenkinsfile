@@ -29,14 +29,6 @@ pipeline {
             }
         }
 
-        stage('MVN SonarQube') {
-            steps {
-                    withSonarQubeEnv('Sonarqube') {
-                        sh 'mvn sonar:sonar'
-                    }
-                }
-        }
-
         stage('test') {
             steps {
                 // Check out the code from the repository
@@ -46,6 +38,16 @@ pipeline {
                 sh 'mvn test'
             }
         }
+
+        stage('MVN SonarQube') {
+            steps {
+                    withSonarQubeEnv('Sonarqube') {
+                        sh 'mvn sonar:sonar'
+                    }
+                }
+        }
+
+        
         
 
 
