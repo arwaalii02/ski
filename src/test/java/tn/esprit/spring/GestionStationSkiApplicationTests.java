@@ -85,10 +85,7 @@ class GestionStationSkiApplicationTests {
 
     @Test
     void testGetSubscriptionByType() {
-        Set<Subscription> annualSubscriptions = new HashSet<>();
-        annualSubscriptions.add(new Subscription(1L, LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31), 250.0f, TypeSubscription.ANNUAL));
-        annualSubscriptions.add(new Subscription(2L, LocalDate.of(2024, 6, 1), LocalDate.of(2024, 11, 30), 150.0f, TypeSubscription.ANNUAL));
-
+        
         when(subRepository.findByTypeSubOrderByStartDateAsc(TypeSubscription.ANNUAL)).thenReturn(annualSubscriptions);
 
         Set<Subscription> result = subServices.getSubscriptionByType(TypeSubscription.ANNUAL);
@@ -100,10 +97,7 @@ class GestionStationSkiApplicationTests {
 
     @Test
     void testRetrieveSubscriptionsByDates() {
-        List<Subscription> subscriptionsInRange = new ArrayList<>();
-        subscriptionsInRange.add(new Subscription(1L, LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31), 250.0f, TypeSubscription.ANNUAL));
-        subscriptionsInRange.add(new Subscription(2L, LocalDate.of(2024, 6, 1), LocalDate.of(2024, 11, 30), 120.0f, TypeSubscription.SEMESTRIEL));
-
+       
         when(subRepository.getSubscriptionsByStartDateBetween(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31)))
                 .thenReturn(subscriptionsInRange);
 
