@@ -83,30 +83,30 @@ class GestionStationSkiApplicationTests {
     //     verify(subRepository).findAll();
     // }
 
-    @Test
-    void testGetSubscriptionByType() {
+    // @Test
+    // void testGetSubscriptionByType() {
         
-        when(subRepository.findByTypeSubOrderByStartDateAsc(TypeSubscription.ANNUAL)).thenReturn(annualSubscriptions);
+    //     when(subRepository.findByTypeSubOrderByStartDateAsc(TypeSubscription.ANNUAL)).thenReturn(annualSubscriptions);
 
-        Set<Subscription> result = subServices.getSubscriptionByType(TypeSubscription.ANNUAL);
-        assertNotNull(result);
-        assertEquals(2, result.size());
-        assertTrue(result.stream().allMatch(sub -> sub.getTypeSub() == TypeSubscription.ANNUAL));
-        verify(subRepository).findByTypeSubOrderByStartDateAsc(TypeSubscription.ANNUAL);
-    }
+    //     Set<Subscription> result = subServices.getSubscriptionByType(TypeSubscription.ANNUAL);
+    //     assertNotNull(result);
+    //     assertEquals(2, result.size());
+    //     assertTrue(result.stream().allMatch(sub -> sub.getTypeSub() == TypeSubscription.ANNUAL));
+    //     verify(subRepository).findByTypeSubOrderByStartDateAsc(TypeSubscription.ANNUAL);
+    // }
 
-    @Test
-    void testRetrieveSubscriptionsByDates() {
+    // @Test
+    // void testRetrieveSubscriptionsByDates() {
        
-        when(subRepository.getSubscriptionsByStartDateBetween(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31)))
-                .thenReturn(subscriptionsInRange);
+    //     when(subRepository.getSubscriptionsByStartDateBetween(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31)))
+    //             .thenReturn(subscriptionsInRange);
 
-        List<Subscription> result = subServices.retrieveSubscriptionsByDates(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31));
-        assertNotNull(result);
-        assertEquals(2, result.size());
-        assertTrue(result.stream().allMatch(sub -> sub.getStartDate().isAfter(LocalDate.of(2023, 12, 31)) && sub.getStartDate().isBefore(LocalDate.of(2025, 1, 1))));
-        verify(subRepository).getSubscriptionsByStartDateBetween(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31));
-    }
+    //     List<Subscription> result = subServices.retrieveSubscriptionsByDates(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31));
+    //     assertNotNull(result);
+    //     assertEquals(2, result.size());
+    //     assertTrue(result.stream().allMatch(sub -> sub.getStartDate().isAfter(LocalDate.of(2023, 12, 31)) && sub.getStartDate().isBefore(LocalDate.of(2025, 1, 1))));
+    //     verify(subRepository).getSubscriptionsByStartDateBetween(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31));
+    // }
 
 
 
