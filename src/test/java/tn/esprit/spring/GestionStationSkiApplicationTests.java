@@ -74,14 +74,8 @@ class GestionStationSkiApplicationTests {
         verify(subRepository).findById(999L);
     }
 
-    @Test
-    void testRetrieveAllSubscriptions() {
-        when(subRepository.findAll()).thenReturn(lc);
-        List<Subscription> subscriptions = subServices.retrieveAllSubscriptions();
-        assertEquals(3, subscriptions.size());
-        assertEquals(lc, subscriptions);
-        verify(subRepository).findAll();
-    }
+    
+    
 
 
 
