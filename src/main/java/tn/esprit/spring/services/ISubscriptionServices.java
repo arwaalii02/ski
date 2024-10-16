@@ -19,7 +19,7 @@ public interface ISubscriptionServices {
 
 	List<Subscription> retrieveSubscriptionsByDates(LocalDate startDate, LocalDate endDate);
 	
-	List<Subscription> retrieveAllSubscriptions();
+	List<Subscription> subscriptions = subRepository.findAll();
 
 	void retrieveSubscriptions();
 }
