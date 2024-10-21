@@ -38,6 +38,7 @@ pipeline {
                 sh 'mvn test'
             }
         }
+        
 
         stage('MVN SonarQube') {
             steps {
@@ -47,7 +48,15 @@ pipeline {
                 }
         }
 
-        
+        stage('nexus') {
+            steps {
+                // Check out the code from the repository
+                checkout scm
+
+                // Run Maven clean install
+                sh 'mvn deploy -e -X -Dnexus.login=admin -Dnexus.password=Aghx?2001'
+            }
+        }
         
 
 
