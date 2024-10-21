@@ -18,6 +18,15 @@ pipeline {
                 sh 'mvn clean package'
             }
         }
+        stage('test') {
+                    steps {
+                        // Check out the code from the repository
+                        checkout scm
+
+                        // Run Maven clean install
+                        sh 'mvn test'
+                    }
+                }
         stage('MVN SonarQube') {
             steps {
                     withSonarQubeEnv('Sonar') {
