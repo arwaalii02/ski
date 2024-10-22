@@ -32,6 +32,13 @@ pipeline {
                               sh 'mvn test'
                         }
                      }
+         stage('Build') {
+              steps {
+                                                       script {
+                                                           sh 'mvn package'
+                                                       }
+                                                   }
+                                               }
 
           stage('Deploy to Nexus') {
                             steps {
