@@ -27,7 +27,7 @@ pipeline {
                     }
                 }
 
-         stage('Test Class Subscription') {
+         stage('Test Class Instructor') {
                           steps {
                               sh 'mvn test'
                         }

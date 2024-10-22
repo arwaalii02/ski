@@ -8,6 +8,7 @@ import tn.esprit.spring.entities.*;
 import tn.esprit.spring.repositories.IInstructorRepository;
 import tn.esprit.spring.repositories.ISubscriptionRepository;
 import tn.esprit.spring.services.IInstructorServices;
+import tn.esprit.spring.services.InstructorServicesImpl;
 import tn.esprit.spring.services.SubscriptionServicesImpl;
 
 import java.time.LocalDate;
@@ -26,7 +27,7 @@ class GestionStationSkiApplicationTests {
 	IInstructorRepository instRepository;
 
 	@InjectMocks
-	IInstructorServices instServices;
+	InstructorServicesImpl instServices;
 
 	Instructor s = new Instructor(1L,"amir","boudidah",LocalDate.of(2024, 1, 1));
 
