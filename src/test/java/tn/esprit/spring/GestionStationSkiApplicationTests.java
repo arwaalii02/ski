@@ -42,7 +42,7 @@ class GestionStationSkiApplicationTests {
 
 
 	@Test
-	void testRetrieveSubscription() {
+	void testRetrieveInstructor() {
 		when(instRepository.findById(1L)).thenReturn(Optional.of(s));
 		Instructor retrievedInstructor = instServices.retrieveInstructor(1L);
 		assertNotNull(retrievedInstructor);
