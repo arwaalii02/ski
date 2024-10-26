@@ -1,54 +1,81 @@
 pipeline {
     agent any
-
+    environment {
+        DOCKER_IMAGE = "amirboudidah/gestion-station-ski"
+        DOCKER_TAG = "1.0.0"
+    }
     stages {
         stage('Main') {
             steps {
-                // Compile the Spring Boot project
                 echo "Echo Test of amirboudidah Branch"
             }
         }
 
         stage('Compile') {
             steps {
-                // Check out the code from the repository
                 checkout scm
-
-                // Run Maven clean install
                 sh 'mvn compile'
             }
         }
 
         stage('SonarQube Analysis') {
-                    steps {
-                        withSonarQubeEnv('sonarqube') {
-                           sh 'mvn sonar:sonar'
-                        }
-                    }
+            steps {
+                withSonarQubeEnv('sonarqube') {
+                    sh 'mvn sonar:sonar'
                 }
+            }
+        }
 
-         stage('Test Class Instructor') {
-                          steps {
-                              sh 'mvn test'
-                        }
-                     }
+        stage('Test Class Instructor') {
+            steps {
+                sh 'mvn test'
+            }
+        }
 
-         stage('Build') {
-              steps {
-                                                       script {
-                                                           sh 'mvn package'
-                                                       }
-                                                   }
-                                               }
+        stage('Build') {
+            steps {
+                script {
+                    sh 'mvn package'
+                }
+            }
+        }
 
-          stage('Deploy to Nexus') {
-                            steps {
-                                script {
-                                    // Deploy the project, skipping tests
-                                    sh 'mvn clean deploy -DskipTests'
-                                }
-                            }
-                        }
+        stage('Deploy to Nexus') {
+            steps {
+                script {
+                    sh 'mvn clean deploy -DskipTests'
+                }
+            }
+        }
 
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', passwordVariable: '201JMT0090', usernameVariable: 'amir.boudidah@esprit.tn')]) {
+                        sh 'echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin'
+                    }
+                    sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                }
+            }
+        }
+    }
+    post {
+        always {
+            sh 'docker rmi ${DOCKER_IMAGE}:${DOCKER_TAG}'
+        }
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed.'
+        }
     }
 }
