@@ -51,26 +51,29 @@ pipeline {
         }
 
         stage('Create Docker Repository') {
-                    steps {
-                        script {
-                            echo "Creating Docker repository if it doesn't exist..."
-                            withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
-                                def createRepoResponse = sh(script: """
-                                    curl -X POST -u '${DOCKER_USERNAME}:${DOCKER_PASSWORD}' \
-                                    -H 'Content-Type: application/json' \
-                                    -d '{"namespace": "${DOCKER_USERNAME}", "name": "gestion-station-ski", "is_private": false}' \
-                                    https://hub.docker.com/repositories/${DOCKER_USERNAME}
-                                """, returnStatus: true)
+            steps {
+                script {
+                    echo "Creating Docker repository if it doesn't exist..."
+                    withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+                        def createRepoResponse = sh(script: """
+                            curl -X POST -u '${DOCKER_USERNAME}:${DOCKER_PASSWORD}' \
+                            -H 'Content-Type: application/json' \
+                            -d '{"name": "gestion-station-ski", "is_private": false}' \
+                            https://hub.docker.com/v2/repositories/${DOCKER_USERNAME}
+                        """, returnStatus: true)
 
-                                if (createRepoResponse != 201 && createRepoResponse != 409) {
-                                    error "Failed to create Docker repository. Please check your permissions or if the repository already exists."
-                                } else {
-                                    echo "Docker repository created successfully or already exists."
-                                }
-                            }
+                        echo "Response Code: ${createRepoResponse}"
+
+                        if (createRepoResponse != 201 && createRepoResponse != 409) {
+                            error "Failed to create Docker repository. Please check your permissions or if the repository already exists."
+                        } else {
+                            echo "Docker repository created successfully or already exists."
                         }
                     }
                 }
+            }
+        }
+
 
                 stage('Build Docker Image') {
                     steps {
