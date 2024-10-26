@@ -50,7 +50,7 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
 
-  app-stationski:
+  app:
     depends_on:
       - mysql
     ports:
