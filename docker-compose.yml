@@ -9,36 +9,36 @@ services:
 #    volumes:
 #      - jenkins_home:/var/jenkins_home
 
-  sonarqube:
-    image: sonarqube:latest
-    ports:
-      - "9000:9000"
-      - "9092:9092"
-    volumes:
-      - SonarQube_data:/opt/SonarQube/data
-      - SonarQube_extensions:/opt/SonarQube/extensions
-      - SonarQube_logs:/opt/SonarQube/logs
-
-  nexus:
-    image: sonatype/nexus3
-    ports:
-      - "8081:8081"
-    volumes:
-      - nexus_data:/nexus-data
-
-
-  prometheus:
-    image: prom/prometheus
-    ports:
-      - "9090:9090"
-    volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
-
-
-  grafana:
-    image: grafana/grafana-oss
-    ports:
-      - "3000:3000"
+#  sonarqube:
+#    image: sonarqube:latest
+#    ports:
+#      - "9000:9000"
+#      - "9092:9092"
+#    volumes:
+#      - SonarQube_data:/opt/SonarQube/data
+#      - SonarQube_extensions:/opt/SonarQube/extensions
+#      - SonarQube_logs:/opt/SonarQube/logs
+#
+#  nexus:
+#    image: sonatype/nexus3
+#    ports:
+#      - "8081:8081"
+#    volumes:
+#      - nexus_data:/nexus-data
+#
+#
+#  prometheus:
+#    image: prom/prometheus
+#    ports:
+#      - "9090:9090"
+#    volumes:
+#      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+#
+#
+#  grafana:
+#    image: grafana/grafana-oss
+#    ports:
+#      - "3000:3000"
 
   mysql:
     image: mysql:latest
