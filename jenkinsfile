@@ -55,11 +55,12 @@ pipeline {
                 script {
                     echo "Creating Docker repository if it doesn't exist..."
                     withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+                        // Using the credentials directly without interpolation
                         def createRepoResponse = sh(script: """
-                            curl -X POST -u '${DOCKER_USERNAME}:${DOCKER_PASSWORD}' \
+                            curl -X POST -u ${DOCKER_USERNAME}:${DOCKER_PASSWORD} \
                             -H 'Content-Type: application/json' \
-                            -d '{"name": "gestion-station-ski", "is_private": false}' \
-                            https://hub.docker.com/v2/repositories/${DOCKER_USERNAME}
+                            -d '{"name": "gestion-station-ski", "namespace": "${DOCKER_USERNAME}", "is_private": false}' \
+                            https://hub.docker.com/v2/repositories/
                         """, returnStatus: true)
 
                         echo "Response Code: ${createRepoResponse}"
@@ -73,6 +74,7 @@ pipeline {
                 }
             }
         }
+
 
 
                 stage('Build Docker Image') {
