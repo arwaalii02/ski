@@ -51,7 +51,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh "sudo docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
+                    sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
                 }
             }
         }
@@ -60,16 +60,16 @@ pipeline {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', passwordVariable: '201JMT0090', usernameVariable: 'amir.boudidah@esprit.tn')]) {
-                        sh 'echo "$DOCKER_PASSWORD" | sudo docker login -u "$DOCKER_USERNAME" --password-stdin'
+                        sh 'echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin'
                     }
-                    sh "sudo docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                    sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
                 }
             }
         }
     }
     post {
         always {
-            sh 'sudo docker rmi ${DOCKER_IMAGE}:${DOCKER_TAG}'
+            sh 'docker rmi ${DOCKER_IMAGE}:${DOCKER_TAG}'
         }
         success {
             echo 'Pipeline completed successfully!'
