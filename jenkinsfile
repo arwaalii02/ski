@@ -60,7 +60,7 @@ pipeline {
                             curl -X POST -u ${DOCKER_USERNAME}:${DOCKER_PASSWORD} \
                             -H 'Content-Type: application/json' \
                             -d '{"name": "gestion-station-ski", "namespace": "${DOCKER_USERNAME}", "is_private": false}' \
-                            https://hub.docker.com/v2/repositories/
+                            https://hub.docker.com/v2/repositories/${DOCKER_USERNAME}
                         """, returnStatus: true)
 
                         echo "Response Code: ${createRepoResponse}"
