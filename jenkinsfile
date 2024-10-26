@@ -63,22 +63,23 @@ pipeline {
                 }
 
                 stage('Push Docker Image') {
-                     steps {
-                         script {
-                             echo "Using credentials ID: dockerhub-credentials"
-                             withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
-                                 // Log in to Docker Hub
-                                 def loginResult = sh(script: "echo \$DOCKER_PASSWORD | docker login -u \$DOCKER_USERNAME --password-stdin", returnStatus: true)
-                                 if (loginResult != 0) {
-                                     error "Docker login failed! Please check your credentials."
-                                 }
-                             }
-                             // Push the Docker image
-                             sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
-                         }
-                     }
-                 }
+                    steps {
+                        script {
+                            echo "Using credentials ID: dockerhub-credentials"
+                            withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+                                // Log in to Docker Hub
+                                def loginResult = sh(script: "echo \$DOCKER_PASSWORD | docker login -u \$DOCKER_USERNAME --password-stdin", returnStatus: true)
+                                if (loginResult != 0) {
+                                    error "Docker login failed! Please check your credentials."
+                                }
+                            }
+                            // Push the Docker image
+                            sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                        }
+                    }
+                }
 
+            }
             post {
                 always {
                     sh 'docker rmi ${DOCKER_IMAGE}:${DOCKER_TAG}'
