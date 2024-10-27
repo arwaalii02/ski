@@ -2,7 +2,7 @@ pipeline {
     agent any
     environment {
         DOCKER_IMAGE = "boudidahamir/gestion-station-ski"
-        DOCKER_TAG = "1.0.0"
+
         NEXUS_URL = "http://192.168.18.134:8081/repository/maven-releases/tn/esprit/spring/gestion-station-ski/1.0/gestion-station-ski-1.0.jar"
         JAR_NAME = "gestion-station-ski-1.0.jar"
     }
@@ -16,7 +16,7 @@ pipeline {
         stage('Compile') {
             steps {
                 checkout scm
-                sh 'mvn compile'
+                sh 'mvn clean compile'
             }
         }
 
@@ -30,14 +30,14 @@ pipeline {
 
         stage('Test Class Instructor') {
             steps {
-                sh 'mvn test'
+                sh 'mvn clean test'
             }
         }
 
         stage('Build') {
             steps {
                 script {
-                    sh 'mvn package'
+                    sh 'mvn clean package'
                 }
             }
         }
@@ -57,7 +57,7 @@ pipeline {
                 stage('Build Docker Image') {
                     steps {
                         script {
-                            sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
+                            sh "docker build -t ${DOCKER_IMAGE} ."
                         }
                     }
                 }
@@ -68,7 +68,7 @@ pipeline {
                             withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
                                 sh(returnStatus: true, script: "echo \$DOCKER_PASSWORD | docker login -u \$DOCKER_USERNAME --password-stdin")
                             }
-                            sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                            sh "docker push ${DOCKER_IMAGE}"
                         }
                     }
                 }
@@ -85,7 +85,7 @@ pipeline {
             }
             post {
                 always {
-                    sh 'docker rmi ${DOCKER_IMAGE}:${DOCKER_TAG}'
+                    sh 'done'
                 }
                 success {
                     echo 'Pipeline completed successfully!'
