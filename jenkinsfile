@@ -2,7 +2,6 @@ pipeline {
     agent any
     environment {
         DOCKER_IMAGE = "boudidahamir/gestion-station-ski"
-
         NEXUS_URL = "http://192.168.18.134:8081/repository/maven-releases/tn/esprit/spring/gestion-station-ski/1.0/gestion-station-ski-1.0.jar"
         JAR_NAME = "gestion-station-ski-1.0.jar"
     }
@@ -50,48 +49,43 @@ pipeline {
             }
         }
 
-
-
-
-
-                stage('Build Docker Image') {
-                    steps {
-                        script {
-                            sh "docker build -t ${DOCKER_IMAGE} ."
-                        }
-                    }
-                }
-
-                /* stage('Push Docker Image') {
-                    steps {
-                        script {
-                            withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
-                                sh(returnStatus: true, script: "echo \$DOCKER_PASSWORD | docker login -u \$DOCKER_USERNAME --password-stdin")
-                            }
-                            sh "docker push ${DOCKER_IMAGE}"
-                        }
-                    }
-                } */
-
-
-                stage('Run Docker Compose') {
-                            steps {
-                                script {
-                                    sh 'docker-compose up -d'
-                                }
-                            }
-                        }
-
-            }
-            post {
-                always {
-                    sh 'done'
-                }
-                success {
-                    echo 'Pipeline completed successfully!'
-                }
-                failure {
-                    echo 'Pipeline failed.'
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    sh "docker build -t ${DOCKER_IMAGE} ."
                 }
             }
+        }
+
+        /* stage('Push Docker Image') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+                        sh(returnStatus: true, script: "echo \$DOCKER_PASSWORD | docker login -u \$DOCKER_USERNAME --password-stdin")
+                    }
+                    sh "docker push ${DOCKER_IMAGE}"
+                }
+            }
+        } */
+
+        stage('Run Docker Compose') {
+            steps {
+                script {
+                    sh 'docker-compose up -d'
+                }
+            }
+        }
+    }
+    post {
+        always {
+            echo 'Executing post-cleanup tasks, if any.'
+            // Add any actual cleanup commands here if needed, such as stopping services.
+        }
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed.'
+        }
+    }
 }
