@@ -1,7 +1,6 @@
-version: '3.8'
-
 networks:
-  app-network:
+  devopsproj_app-network:
+    external: true
 
 services:
   mysql:
