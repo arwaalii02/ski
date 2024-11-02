@@ -14,7 +14,7 @@ import java.util.List;
 @RequestMapping("/piste")
 @RequiredArgsConstructor
 public class PisteRestController {
-
+////////////////////
     private final IPisteServices pisteServices;
 
     @Operation(description = "Add Piste")
