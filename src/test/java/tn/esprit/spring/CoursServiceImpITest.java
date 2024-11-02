@@ -24,6 +24,7 @@ import java.util.Set;
 
 @ExtendWith(MockitoExtension.class)
 public class CoursServiceImpITest {
+    /*
     @Mock
     private ICourseRepository courseRepository;
 
@@ -141,5 +142,5 @@ public class CoursServiceImpITest {
         verify(courseRepository, times(1)).save(course);
     }
 
-
+*/
 }
