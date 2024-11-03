@@ -14,7 +14,7 @@ services:
   app-timesheet:
     depends_on:
       - mysqldb
-    image: arwaali1/ski-image:1.0.0
+    image: arwaali1/gestion-station-ski-image:1.0.0
     #build : ./
     restart: on-failure
     ports:
