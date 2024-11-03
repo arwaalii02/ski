@@ -1,4 +1,5 @@
 package tn.esprit.spring;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -15,16 +16,10 @@ import tn.esprit.spring.entities.TypeCourse;
 import tn.esprit.spring.repositories.ICourseRepository;
 import tn.esprit.spring.repositories.IRegistrationRepository;
 import tn.esprit.spring.services.CourseServicesImpl;
+import org.mockito.MockitoAnnotations;
+import java.util.*;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
-@ExtendWith(MockitoExtension.class)
-public class CoursServiceImpITest {
-    /*
+public class CourseServicelmplTest {
     @Mock
     private ICourseRepository courseRepository;
 
@@ -36,10 +31,14 @@ public class CoursServiceImpITest {
 
     private Course course;
     private Registration registration;
+    private Date startDate;
+    private Date endDate;
 
     @BeforeEach
-    public void setup() {
-        // Initialize Course object
+    void setup() {  // Le mot-clé 'public' a été retiré ici
+        MockitoAnnotations.openMocks(this); // Initialiser les mocks explicitement
+
+        // Initialiser l'objet Course
         course = new Course();
         course.setNumCourse(1L);
         course.setLevel(1);
@@ -48,13 +47,27 @@ public class CoursServiceImpITest {
         course.setPrice(100.0f);
         course.setTimeSlot(2);
 
-        // Initialize Registration object
+        // Utiliser lenient pour éviter des erreurs de stubbing non utilisées
+        lenient().when(courseRepository.findById(1L)).thenReturn(Optional.of(course));
+        lenient().when(courseRepository.save(any(Course.class))).thenReturn(course);
+
+        // Initialiser l'objet Registration et les dates pour les tests
         registration = new Registration();
         registration.setNumRegistration(1L);
+
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, -30);
+        startDate = cal.getTime();
+
+        cal.add(Calendar.DATE, 15);
+        registration.setRegistrationDate(cal.getTime());
+
+        cal.add(Calendar.DATE, 15);
+        endDate = cal.getTime();
     }
 
     @Test
-    public void testRetrieveAllCourses() {
+    void testRetrieveAllCourses() {  // Le mot-clé 'public' a été retiré ici
         // Given
         Course course1 = new Course();
         course1.setNumCourse(1L);
@@ -84,7 +97,7 @@ public class CoursServiceImpITest {
     }
 
     @Test
-    public void testAddCourse() {
+    void testAddCourse() {  // Le mot-clé 'public' a été retiré ici
         // Given
         when(courseRepository.save(course)).thenReturn(course);
 
@@ -96,20 +109,31 @@ public class CoursServiceImpITest {
     }
 
     @Test
-    public void testUpdateCourse() {
-        // Given
-        course.setPrice(120.0f); // updated price
-        when(courseRepository.save(course)).thenReturn(course);
+    void testUpdateCourse() {  // Le mot-clé 'public' a été retiré ici
+        // Stub pour s'assurer que le cours existe
+        when(courseRepository.existsById(1L)).thenReturn(true);  // Assure que existsById renvoie true
+        when(courseRepository.save(any(Course.class))).thenReturn(course);
 
-        // When
-        Course result = courseService.updateCourse(course);
+        // Modifier les informations du cours
+        course.setPrice(150.0f);
+        course.setLevel(3);
 
-        // Then
-        assertEquals(course, result);
+        // Appeler la méthode de mise à jour
+        Course updatedCourse = courseService.updateCourse(course);
+
+        // Vérifications
+        assertNotNull(updatedCourse);
+        assertEquals(1L, updatedCourse.getNumCourse());
+        assertEquals(150.0f, updatedCourse.getPrice());
+        assertEquals(3, updatedCourse.getLevel());
+
+        // Vérifier que existsById et save ont été appelés
+        verify(courseRepository, times(1)).existsById(1L);
+        verify(courseRepository, times(1)).save(course);
     }
 
     @Test
-    public void testRetrieveCourse() {
+    void testRetrieveCourse() {  // Le mot-clé 'public' a été retiré ici
         // Given
         Long courseId = 1L;
         when(courseRepository.findById(courseId)).thenReturn(Optional.of(course));
@@ -122,25 +146,56 @@ public class CoursServiceImpITest {
     }
 
     @Test
-    public void testAddCourseAndAssignToRegistration() {
-        // Given
+    void testAddCourseAndAssignToRegistration() {  // Le mot-clé 'public' a été retiré ici
+        // Simuler le comportement du repository pour la récupération d'inscription
         when(registrationRepository.findById(1L)).thenReturn(Optional.of(registration));
-        when(courseRepository.save(course)).thenReturn(course);
+        when(courseRepository.save(any(Course.class))).thenReturn(course);
 
-        // When
+        // Appeler la méthode testée
         Course result = courseService.addCourseAndAssignToregistre(course, 1L);
 
-        // Then
+        // Vérifier les résultats
         assertNotNull(result);
-        Set<Registration> registrations = result.getRegistrations();
-        assertNotNull(registrations);
-        assertTrue(registrations.contains(registration));
-        assertEquals(1, registrations.size());
-
-        // Verify interactions
-        verify(registrationRepository, times(1)).findById(1L);
-        verify(courseRepository, times(1)).save(course);
+        assertTrue(result.getRegistrations().contains(registration));
     }
 
-*/
+    @Test
+    void testCalculateRevenuePerCourse() {  // Le mot-clé 'public' a été retiré ici
+        registration.setRegistrationDate(new Date(startDate.getTime() + (1000L * 60 * 60 * 24 * 10))); // 10 jours après startDate
+        course.setRegistrations(new HashSet<>(Collections.singletonList(registration)));
+
+        when(courseRepository.findById(1L)).thenReturn(Optional.of(course));
+
+        float revenue = courseService.calculateRevenuePerCourse(1L, startDate, endDate);
+        assertEquals(100.0f, revenue);
+    }
+
+    @Test
+    void testGetTotalRevenueAndRegistrations() {  // Le mot-clé 'public' a été retiré ici
+        registration.setRegistrationDate(new Date(startDate.getTime() + (1000L * 60 * 60 * 24 * 10))); // 10 jours après startDate
+        course.setRegistrations(new HashSet<>(Collections.singletonList(registration)));
+        List<Course> courses = Arrays.asList(course);
+
+        when(courseRepository.findAll()).thenReturn(courses);
+
+        Map<String, Object> result = courseService.getTotalRevenueAndRegistrations(startDate, endDate);
+
+        assertEquals(100.0f, result.get("totalRevenue"));
+        assertEquals(1, result.get("totalRegistrations"));
+    }
+
+    @Test
+    void testGetCoursePopularity() {  // Le mot-clé 'public' a été retiré ici
+        registration.setRegistrationDate(new Date(startDate.getTime() + (1000L * 60 * 60 * 24 * 10))); // 10 jours après startDate
+        course.setRegistrations(new HashSet<>(Collections.singletonList(registration)));
+
+        when(courseRepository.findById(1L)).thenReturn(Optional.of(course));
+
+        int popularity = courseService.getCoursePopularity(1L, startDate, endDate);
+
+        assertEquals(1, popularity);
+    }
 }
+
+
+
