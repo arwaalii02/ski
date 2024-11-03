@@ -65,23 +65,27 @@ pipeline {
             }
         }
         
-        stage('Build Docker Image') {
-                            steps {
-                                sh 'docker build -t $DOCKER_IMAGE .'
-                            }
+        stage('Image') {
+            steps {
+                echo 'Création Image : ';
+                sh 'docker build -t ahmedharleyy/achat-image:1.0.0 .';
+            }
         }
 
-         stage('Push Docker Image') {
-                    steps {
-                        script {
-                            // Log in to Docker Hub
-                            docker.withRegistry('https://index.docker.io/v1/', DOCKER_CREDENTIALS_ID) {
-                                // Push the Docker image
-                                sh 'docker push $DOCKER_IMAGE'
-                            }
-                        }
-                    }
-                }
+        stage('Dockerhub') {
+            steps {
+                echo 'Push Image to dockerhub : ';
+                sh 'docker login -u ahmedharleyy -p Aghx?2001';
+                sh 'docker push ahmedharleyy/achat-image:1.0.0';
+            }
+        }
+
+        stage('Docker-Compose') {
+            steps {
+                echo 'Staet Backend + DB : ';
+                sh 'docker compose up -d';
+            }
+        }
 
     }
 }
