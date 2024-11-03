@@ -26,6 +26,7 @@ public interface IRegistrationRepository extends CrudRepository<Registration, Lo
 
 
 
+    
 
 
 }
