@@ -68,7 +68,7 @@ pipeline {
         stage('Image') {
             steps {
                 echo 'Création Image : ';
-                sh 'docker build -t ahmedharleyy/achat-image:1.0.0 .';
+                sh 'docker build -t ahmedharleyy/ski';
             }
         }
 
@@ -76,7 +76,7 @@ pipeline {
             steps {
                 echo 'Push Image to dockerhub : ';
                 sh 'docker login -u ahmedharleyy -p Aghx?2001';
-                sh 'docker push ahmedharleyy/achat-image:1.0.0';
+                sh 'docker push ahmedharleyy/ski';
             }
         }
 
