@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-
+            DOCKER_CREDENTIALS_ID = 'docker-hub-credentials'
             DOCKER_IMAGE = 'ahmedharleyy/ski' // Replace with your image name
         }
 
@@ -75,7 +75,7 @@ pipeline {
                     steps {
                         script {
                             // Log in to Docker Hub
-                            docker.withRegistry('https://index.docker.io/v1/') {
+                            docker.withRegistry('https://index.docker.io/v1/', DOCKER_CREDENTIALS_ID) {
                                 // Push the Docker image
                                 sh 'docker push $DOCKER_IMAGE'
                             }
