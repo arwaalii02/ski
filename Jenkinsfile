@@ -48,13 +48,9 @@ pipeline {
                 }
         }
 
-        stage('nexus') {
+        stage('Deploy to Nexus') {
             steps {
-                // Check out the code from the repository
-                checkout scm
-
-                // Run Maven clean install
-                sh 'mvn deploy -e -X -Dnexus.login=admin -Dnexus.password=Aghx?2001'
+                sh 'mvn clean deploy -DskipTests'
             }
         }
         
