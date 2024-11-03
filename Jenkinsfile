@@ -1,6 +1,11 @@
 pipeline {
     agent any
 
+    environment {
+
+            DOCKER_IMAGE = 'ahmedharleyy/ski' // Replace with your image name
+        }
+
     stages {
         stage('Main') {
             steps {
@@ -60,7 +65,23 @@ pipeline {
             }
         }
         
+        stage('Build Docker Image') {
+                            steps {
+                                sh 'docker build -t $DOCKER_IMAGE .'
+                            }
+        }
 
+         stage('Push Docker Image') {
+                    steps {
+                        script {
+                            // Log in to Docker Hub
+                            docker.withRegistry('https://index.docker.io/v1/') {
+                                // Push the Docker image
+                                sh 'docker push $DOCKER_IMAGE'
+                            }
+                        }
+                    }
+                }
 
     }
 }
