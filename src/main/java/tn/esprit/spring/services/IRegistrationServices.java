@@ -5,6 +5,7 @@ import tn.esprit.spring.entities.*;
 import java.util.List;
 
 public interface IRegistrationServices {
+	
 
 	Registration addRegistrationAndAssignToSkier(Registration registration, Long numSkier);
 	Registration assignRegistrationToCourse(Long numRegistration, Long numCourse);
