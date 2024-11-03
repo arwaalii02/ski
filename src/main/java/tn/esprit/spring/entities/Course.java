@@ -20,19 +20,21 @@ import lombok.experimental.FieldDefaults;
 @Entity
 public class Course implements Serializable {
 
-	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	Long numCourse;
-	int level;
-	@Enumerated(EnumType.STRING)
-	TypeCourse typeCourse;
-	@Enumerated(EnumType.STRING)
-	Support support;
-	Float price;
-	int timeSlot;
+@Id
+@GeneratedValue(strategy=GenerationType.IDENTITY)
+Long numCourse;
+int level;
 
-	@JsonIgnore
-	@OneToMany(mappedBy= "course")
-	Set<Registration> registrations;
+@Enumerated(EnumType.STRING)
+TypeCourse typeCourse;
+@Enumerated(EnumType.STRING)
+Support support;
+
+Float price;
+int timeSlot;
+
+@JsonIgnore
+@OneToMany(mappedBy= "course")
+transient Set<Registration> registrations;  // Ajout de transient
 
 }
