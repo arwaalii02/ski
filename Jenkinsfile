@@ -66,26 +66,49 @@ pipeline {
         }
         
         stage('Image') {
-            steps {
-                echo 'Création Image : ';
-                sh 'docker build -t ahmedharleyy/ski-image:1.0.0 .';
-            }
-        }
+    steps {
+        script {
+            def imageExists = sh(
+                script: "docker manifest inspect ahmedharleyy/ski-image:1.0.0 > /dev/null 2>&1",
+                returnStatus: true
+            ) == 0
 
-        stage('Dockerhub') {
-            steps {
-                echo 'Push Image to dockerhub : ';
-                sh 'docker login -u ahmedharleyy -p Aghx?2001';
-                sh 'docker push ahmedharleyy/ski-image:1.0.0';
+            if (!imageExists) {
+                echo 'Building Image:'
+                sh 'docker build -t ahmedharleyy/ski-image:1.0.0 .'
+            } else {
+                echo 'Image already exists, skipping build.'
             }
         }
+    }
+}
 
-        stage('Docker-Compose') {
-            steps {
-                echo 'Staet Backend + DB : ';
-                sh 'docker compose up -d';
+stage('Dockerhub') {
+    steps {
+        script {
+            def imageExists = sh(
+                script: "docker manifest inspect ahmedharleyy/ski-image:1.0.0 > /dev/null 2>&1",
+                returnStatus: true
+            ) == 0
+
+            if (!imageExists) {
+                echo 'Pushing Image to Docker Hub:'
+                sh 'docker login -u ahmedharleyy -p Aghx?2001'
+                sh 'docker push ahmedharleyy/ski-image:1.0.0'
+            } else {
+                echo 'Image already exists on Docker Hub, skipping push.'
             }
         }
+    }
+}
+
+stage('Docker-Compose') {
+    steps {
+        echo 'Start Backend + DB:'
+        sh 'docker compose up -d'
+    }
+}
+
 
     }
 }

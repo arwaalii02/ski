@@ -28,7 +28,7 @@ services:
       mysql:
         condition: service_healthy
     ports:
-      - "8082:8082"
+      - "8089:8089"
     environment:
       SERVER_SERVLET_CONTEXT_PATH: /api
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/stationSki?createDatabaseIfNotExist=true
