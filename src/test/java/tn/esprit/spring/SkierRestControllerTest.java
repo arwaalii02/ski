@@ -1,128 +1,117 @@
-package tn.esprit.spring.controllers;
+package tn.esprit.spring;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import java.time.LocalDate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import tn.esprit.spring.entities.Skier;
-import tn.esprit.spring.entities.TypeSubscription;
-import tn.esprit.spring.services.ISkierServices;
+import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import tn.esprit.spring.controllers.InstructorRestController;
+import tn.esprit.spring.entities.Instructor;
+import tn.esprit.spring.services.IInstructorServices;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
-@ExtendWith(MockitoExtension.class)
-public class SkierRestControllerTest {
+@SpringBootTest
+@AutoConfigureMockMvc
+public class InstructorRestControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
 
     @Mock
-    private ISkierServices skierServices;
+    private IInstructorServices instructorServices;
 
     @InjectMocks
-    private SkierRestController skierRestController;
+    private InstructorRestController instructorRestController;
 
-    private Skier sampleSkier;
+    private Instructor instructor;
 
     @BeforeEach
-    void setUp() {
-        sampleSkier = new Skier();
-        sampleSkier.setNumSkier(1L);
-        sampleSkier.setFirstName("John");
-        sampleSkier.setLastName("Doe");
+    public void setUp() {
+        MockitoAnnotations.openMocks(this);
+        instructor = new Instructor();
+        instructor.setNumInstructor(1L);
+        instructor.setFirstName("John");
+        instructor.setLastName("Doe");
+        instructor.setDateOfHire(LocalDate.of(2022, 1, 1));
     }
 
     @Test
-    void testAddSkier() {
-        // Given
-        when(skierServices.addSkier(sampleSkier)).thenReturn(sampleSkier);
+    public void testAddInstructor() throws Exception {
+        when(instructorServices.addInstructor(any(Instructor.class))).thenReturn(instructor);
 
-        // When
-        Skier result = skierRestController.addSkier(sampleSkier);
-
-        // Then
-        assertEquals(sampleSkier, result);
-        verify(skierServices).addSkier(sampleSkier);
+        mockMvc.perform(post("/instructor/add")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"numInstructor\":1,\"firstName\":\"John\",\"lastName\":\"Doe\",\"dateOfHire\":\"2022-01-01\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.numInstructor").value(1))
+                .andExpect(jsonPath("$.firstName").value("John"))
+                .andExpect(jsonPath("$.lastName").value("Doe"))
+                .andExpect(jsonPath("$.dateOfHire").value("2022-01-01"));
     }
 
     @Test
-    void testAddSkierAndAssignToCourse() {
-        Long numCourse = 2L;
-        when(skierServices.addSkierAndAssignToCourse(sampleSkier, numCourse)).thenReturn(sampleSkier);
+    public void testGetAllInstructors() throws Exception {
+        List<Instructor> instructors = new ArrayList<>();
+        instructors.add(instructor);
+        when(instructorServices.retrieveAllInstructors()).thenReturn(instructors);
 
-        Skier result = skierRestController.addSkierAndAssignToCourse(sampleSkier, numCourse);
-
-        assertEquals(sampleSkier, result);
-        verify(skierServices).addSkierAndAssignToCourse(sampleSkier, numCourse);
+        mockMvc.perform(get("/instructor/all")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].numInstructor").value(1))
+                .andExpect(jsonPath("$[0].firstName").value("John"))
+                .andExpect(jsonPath("$[0].lastName").value("Doe"))
+                .andExpect(jsonPath("$[0].dateOfHire").value("2022-01-01"));
     }
 
     @Test
-    void testAssignToSubscription() {
-        Long numSkier = 1L;
-        Long numSub = 2L;
-        when(skierServices.assignSkierToSubscription(numSkier, numSub)).thenReturn(sampleSkier);
+    public void testUpdateInstructor() throws Exception {
+        Instructor updatedInstructor = new Instructor();
+        updatedInstructor.setNumInstructor(1L);
+        updatedInstructor.setFirstName("John");
+        updatedInstructor.setLastName("Doe");
+        updatedInstructor.setDateOfHire(LocalDate.of(2022, 1, 1));
 
-        Skier result = skierRestController.assignToSubscription(numSkier, numSub);
+        when(instructorServices.updateInstructor(any(Instructor.class))).thenReturn(updatedInstructor);
 
-        assertEquals(sampleSkier, result);
-        verify(skierServices).assignSkierToSubscription(numSkier, numSub);
+        String requestBody = "{"
+                + "\"numInstructor\": 1,"
+                + "\"firstName\": \"John\","
+                + "\"lastName\": \"Doe\","
+                + "\"dateOfHire\": \"2022-01-01\""
+                + "}";
+
+        mockMvc.perform(put("/instructor/update")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.numInstructor").value(1))
+                .andExpect(jsonPath("$.firstName").value("John"))
+                .andExpect(jsonPath("$.lastName").value("Doe"))
+                .andExpect(jsonPath("$.dateOfHire").value("2022-01-01"));
     }
 
     @Test
-    void testAssignToPiste() {
-        Long numSkier = 1L;
-        Long numPiste = 3L;
-        when(skierServices.assignSkierToPiste(numSkier, numPiste)).thenReturn(sampleSkier);
+    public void testGetById() throws Exception {
+        when(instructorServices.retrieveInstructor(1L)).thenReturn(instructor);
 
-        Skier result = skierRestController.assignToPiste(numSkier, numPiste);
-
-        assertEquals(sampleSkier, result);
-        verify(skierServices).assignSkierToPiste(numSkier, numPiste);
-    }
-
-    @Test
-    void testRetrieveSkiersBySubscriptionType() {
-        TypeSubscription typeSubscription = TypeSubscription.ANNUAL;
-        List<Skier> skiers = Arrays.asList(sampleSkier);
-        when(skierServices.retrieveSkiersBySubscriptionType(typeSubscription)).thenReturn(skiers);
-
-        List<Skier> result = skierRestController.retrieveSkiersBySubscriptionType(typeSubscription);
-
-        assertEquals(skiers, result);
-        verify(skierServices).retrieveSkiersBySubscriptionType(typeSubscription);
-    }
-
-    @Test
-    void testGetById() {
-        Long numSkier = 1L;
-        when(skierServices.retrieveSkier(numSkier)).thenReturn(sampleSkier);
-
-        Skier result = skierRestController.getById(numSkier);
-
-        assertEquals(sampleSkier, result);
-        verify(skierServices).retrieveSkier(numSkier);
-    }
-
-    @Test
-    void testDeleteById() {
-        Long numSkier = 1L;
-
-        skierRestController.deleteById(numSkier);
-
-        verify(skierServices).removeSkier(numSkier);
-    }
-
-    @Test
-    void testGetAllSkiers() {
-        List<Skier> skiers = Arrays.asList(sampleSkier);
-        when(skierServices.retrieveAllSkiers()).thenReturn(skiers);
-
-        List<Skier> result = skierRestController.getAllSkiers();
-
-        assertEquals(skiers, result);
-        verify(skierServices).retrieveAllSkiers();
+        mockMvc.perform(get("/instructor/get/{num-instructor}", 1L)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.numInstructor").value(1))
+                .andExpect(jsonPath("$.firstName").value("John"))
+                .andExpect(jsonPath("$.lastName").value("Doe"))
+                .andExpect(jsonPath("$.dateOfHire").value("2022-01-01"));
     }
 }
