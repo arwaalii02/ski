@@ -1,29 +1,25 @@
 package tn.esprit.spring.controllers;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.Arrays;
-import java.util.List;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.mockito.junit.jupiter.MockitoExtension;
 import tn.esprit.spring.entities.Skier;
 import tn.esprit.spring.entities.TypeSubscription;
 import tn.esprit.spring.services.ISkierServices;
 
-@SpringJUnitConfig
-@WebMvcTest(SkierRestController.class)
+import java.util.Arrays;
+import java.util.List;
+
+@ExtendWith(MockitoExtension.class)
 public class SkierRestControllerTest {
 
-    @MockBean
+    @Mock
     private ISkierServices skierServices;
 
     @InjectMocks
@@ -33,7 +29,6 @@ public class SkierRestControllerTest {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
         sampleSkier = new Skier();
         sampleSkier.setNumSkier(1L);
         sampleSkier.setFirstName("John");
@@ -42,10 +37,13 @@ public class SkierRestControllerTest {
 
     @Test
     void testAddSkier() {
+        // Given
         when(skierServices.addSkier(sampleSkier)).thenReturn(sampleSkier);
 
+        // When
         Skier result = skierRestController.addSkier(sampleSkier);
 
+        // Then
         assertEquals(sampleSkier, result);
         verify(skierServices).addSkier(sampleSkier);
     }
