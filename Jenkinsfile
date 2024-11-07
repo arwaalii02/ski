@@ -96,13 +96,12 @@ pipeline {
         }
 
         stage('Integration Test') {
-            steps {
-                script {
-                    echo 'Running database integration tests in the app container...'
-                    // Ensure to run only the DatabaseIntegrationTest inside the container
-                    sh 'docker exec -it $(docker ps -q -f ancestor=ahmedharleyy/ski-image:1.0.0) mvn -Dtest=DatabaseIntegrationTest test'
-                }
-            }
+    steps {
+        script {
+            echo 'Running database integration tests in the app container...'
+            // Ensure to run only the DatabaseIntegrationTest inside the container
+            sh 'docker exec -it $(docker ps -q -f ancestor=ahmedharleyy/ski-image:1.0.0) mvn -Dtest=DatabaseIntegrationTest test'
         }
+    }
     }
 }
