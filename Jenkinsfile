@@ -103,5 +103,4 @@ pipeline {
             sh 'docker exec -it $(docker ps -q -f ancestor=ahmedharleyy/ski-image:1.0.0) mvn -Dtest=DatabaseIntegrationTest test'
         }
     }
-    }
 }
