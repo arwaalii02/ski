@@ -7,7 +7,7 @@ scrape_configs:
       - targets: ['192.168.50.4:9090']  # Prometheus itself
 
   - job_name: 'jenkins'
-    metrics_path: /prometheus/
+    metrics_path: '/prometheus/'
     static_configs:
       - targets: ['192.168.50.4:8080']  # Replace with your Jenkins IP and port
 
