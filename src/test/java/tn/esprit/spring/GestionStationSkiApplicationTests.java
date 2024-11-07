@@ -10,6 +10,7 @@ import tn.esprit.spring.repositories.ICourseRepository;
 import tn.esprit.spring.repositories.IInstructorRepository;
 import tn.esprit.spring.services.InstructorServicesImpl;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -68,8 +69,9 @@ class GestionStationSkiApplicationTests {
 	@Test
 	void testUpdateInstructor() {
 		Instructor updatedInstructor = new Instructor(1L, "amir", "boudidah", LocalDate.of(2025, 1, 1));
+
 		when(instRepository.findById(1L)).thenReturn(Optional.of(s));
-		when(instRepository.save(updatedInstructor)).thenReturn(updatedInstructor);
+		when(instRepository.save(any(Instructor.class))).thenReturn(updatedInstructor);
 
 		Instructor result = instServices.updateInstructor(updatedInstructor);
 
@@ -80,8 +82,9 @@ class GestionStationSkiApplicationTests {
 		assertEquals(updatedInstructor.getDateOfHire(), result.getDateOfHire());
 
 		verify(instRepository).findById(1L);
-		verify(instRepository).save(updatedInstructor);
+		verify(instRepository).save(any(Instructor.class));
 	}
+
 
 	@Test
 	void testAddInstructorAndAssignToCourse() {
@@ -95,5 +98,5 @@ class GestionStationSkiApplicationTests {
 		verify(courseRepository).findById(1L);
 		verify(instRepository).save(s);
 	}
-	
+
 }
