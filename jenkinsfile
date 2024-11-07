@@ -2,7 +2,7 @@ pipeline {
     agent any
     environment {
         DOCKER_IMAGE = "boudidahamir/gestion-station-ski"
-        NEXUS_URL = "http://192.168.18.134:8081/repository/maven-releases/tn/esprit/spring/gestion-station-ski/1.0/gestion-station-ski-1.0.jar"
+        NEXUS_URL = "http://192.168.18.134:808/repository/maven-releases/tn/esprit/spring/gestion-station-ski/1.0/gestion-station-ski-1.0.jar"
         JAR_NAME = "gestion-station-ski-1.0.jar"
     }
     stages {
