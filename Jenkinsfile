@@ -33,15 +33,7 @@ pipeline {
                         sh 'mvn test'
                     }
                 }
-        stage('MVN SonarQube') {
-            steps {
-                    withSonarQubeEnv('Sonar') {
-                        sh 'mvn sonar:sonar'
-                    }
-                }
-        }
-    }
-            stage('Docker Build') {
+       stage('Docker Build') {
                 steps {
                     script {
                         echo 'Building Docker image...'
