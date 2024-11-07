@@ -43,6 +43,17 @@ pipeline {
                 }
             }
         }
+        stage('OWASP Dependency-Check Vulnerabilities') {
+                    steps {
+                        dependencyCheck additionalArguments: '''
+                            -o './'
+                            -s './'
+                            -f 'ALL'
+                            --prettyPrint''', odcInstallation: 'owasp-dc'
+
+                        dependencyCheckPublisher pattern: 'dependency-check-report.xml'
+                    }
+                }
 
         stage('Deploy to Nexus') {
             steps {
