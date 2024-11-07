@@ -16,32 +16,25 @@ pipeline {
 
         stage('Build & Package') {
             steps {
+                script {
+                    // Print current directory and list files
+                    sh 'pwd'
+                    sh 'ls -la' // List files in the current directory
 
-                    script {
-                        // Print current directory and list files
-                        sh 'pwd'
-                        sh 'ls -la' // List files in the current directory
-
-                        // Change permission to make mvnw executable
-                        sh 'chmod +x ./mvnw'
-
-
-                    }
-                    // Build the project
-                    sh './mvnw clean package -DskipTests'
-
+                    // Make mvnw executable
+                    sh 'chmod +x ./mvnw'
+                }
+                // Build the project
+                sh './mvnw clean package -DskipTests'
             }
         }
 
         stage('Run Unit Tests') {
             steps {
                 script {
+                    // Run tests and generate the JaCoCo report
                     try {
-
-
-                        // Generate the JaCoCo report after tests pass
-                         sh 'mvn clean test jacoco:report'
-
+                        sh './mvnw clean test jacoco:report'
                         // Ensure that JaCoCo report generation is recognized by Jenkins
                         jacoco execPattern: 'target/jacoco.exec'
                     } catch (Exception e) {
@@ -56,7 +49,10 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'nexus-credentials', passwordVariable: 'NEXUS_PASSWORD', usernameVariable: 'NEXUS_USERNAME')]) {
                     // Deploy to Nexus Repository
-                    sh 'mvn deploy -Dusername=$NEXUS_USERNAME -Dpassword=$NEXUS_PASSWORD'
+                    sh '''
+                        echo "Deploying to Nexus..."
+                        mvn deploy -Dusername=$NEXUS_USERNAME -Dpassword=$NEXUS_PASSWORD
+                    '''
                 }
             }
         }
@@ -88,8 +84,12 @@ pipeline {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'dockerhubcredentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                        sh 'echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin || exit 1'
+                        sh '''
+                            echo "Logging in to DockerHub..."
+                            echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin
+                        '''
                         def imageTag = "${DOCKER_IMAGE}:${BUILD_NUMBER}"
+                        echo "Pushing Docker image ${imageTag}..."
                         sh "docker push ${imageTag}"
                     }
                 }
