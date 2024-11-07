@@ -35,13 +35,13 @@ pipeline {
                 }
          stage('Deploy to Nexus') {
                                  steps {
-                                     dir('DevOps_Project') {
+
                                          withCredentials([usernamePassword(credentialsId: 'nexus-credentials', passwordVariable: 'NEXUS_PASSWORD', usernameVariable: 'NEXUS_USERNAME')]) {
                                              // Execute Maven deploy command
                                              sh 'mvn deploy -Dusername=$NEXUS_USERNAME -Dpassword=$NEXUS_PASSWORD'
                                          }
                                      }
-                                 }
+
                              }
 
 
