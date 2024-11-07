@@ -49,7 +49,7 @@ pipeline {
                             -o './'
                             -s './'
                             -f 'ALL'
-                            --prettyPrint''', odcInstallation: 'owasp-dc'
+                            --prettyPrint''', odcInstallation: 'dependencyCheck'
 
                         dependencyCheckPublisher pattern: 'dependency-check-report.xml'
                     }
