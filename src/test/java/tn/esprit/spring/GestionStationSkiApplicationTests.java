@@ -56,7 +56,27 @@ class GestionStationSkiApplicationTests {
 		assertEquals(s.getNumInstructor(), addedInstructor.getNumInstructor());
 		verify(instRepository).save(s);
 	}
+	@Test
+	void testRetrieveAllInstructors() {
+		when(instRepository.findAll()).thenReturn(lc);
+		List<Instructor> instructors = instServices.retrieveAllInstructors();
+		assertNotNull(instructors);
+		assertEquals(3, instructors.size());
+		verify(instRepository).findAll();
+	}
 
+	@Test
+	void testAddInstructorAndAssignToCourse() {
+		when(courseRepository.findById(1L)).thenReturn(Optional.of(c));
+		when(instRepository.save(s)).thenReturn(s);
+
+		Instructor result = instServices.addInstructorAndAssignToCourse(s, 1L);
+
+		assertNotNull(result);
+		assertTrue(result.getCourses().contains(c));  // Check if the course is assigned
+		verify(courseRepository).findById(1L);
+		verify(instRepository).save(s);
+	}
 
 
 }
