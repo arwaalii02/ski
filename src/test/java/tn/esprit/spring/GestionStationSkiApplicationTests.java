@@ -39,6 +39,14 @@ class GestionStationSkiApplicationTests {
 		add(new Instructor(4L, "zzzzzz", "zzzzzzz", LocalDate.of(2024, 1, 1)));
 	}};
 
-	
+	@Test
+	void testRetrieveInstructor() {
+		when(instRepository.findById(1L)).thenReturn(Optional.of(s));
+		Instructor retrievedInstructor = instServices.retrieveInstructor(1L);
+		assertNotNull(retrievedInstructor);
+		assertEquals(s.getNumInstructor(), retrievedInstructor.getNumInstructor());
+		verify(instRepository).findById(1L);
+	}
+
 
 }
