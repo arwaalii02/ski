@@ -6,14 +6,14 @@ RUN mvn clean package -DskipTests
 
 # Stage 2: Run the application (runtime image)
 FROM openjdk:11-jre
+
+# Install Maven in the runtime container for testing purposes
+RUN apt-get update && apt-get install -y maven
+
 WORKDIR /app
 
-# Copy the Maven installation from the build stage
-COPY --from=build /usr/share/maven /usr/share/maven
+# Copy the JAR file from the build stage
 COPY --from=build /app/target/*.jar app.jar
 
-# Set the Maven path
-ENV MAVEN_HOME /usr/share/maven
-ENV PATH $MAVEN_HOME/bin:$PATH
-
+# Set the entrypoint to run the application
 ENTRYPOINT ["java", "-jar", "app.jar"]
