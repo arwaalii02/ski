@@ -181,7 +181,7 @@ pipeline {
             script {
                 def successStages = currentBuild.description.readLines().findAll { it.endsWith('✅') }.join('\n')
                 def failedStages = currentBuild.description.readLines().findAll { it.endsWith('❌') }.join('\n')
-                slackSend(channel: '#debopsproject', message: "*Build succeeded:* ${env.BUILD_URL}\n\nSuccessful Stages:\n${successStages}\n\nFailed Stages:\n${failedStages}", color: 'danger')
+                slackSend(channel: '#debopsproject', message: "*Build failed:* ${env.BUILD_URL}\n\nSuccessful Stages:\n${successStages}\n\nFailed Stages:\n${failedStages}", color: 'danger')
                 def emailBody = """
                 <html>
                     <body>
