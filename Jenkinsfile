@@ -1,103 +1,101 @@
 pipeline {
     agent any
     environment {
-            NEXUS_URL = 'http://192.168.50.4:8081/repository/maven-releases/'
-            DOCKER_IMAGE = 'emna2023/emna-bouzouita-5gamix:latest'
-            VERSION = "latest"
-            GIT_BRANCH = 'emna'
-        }
+        NEXUS_URL = 'http://192.168.50.4:8081/repository/maven-releases/'
+        DOCKER_IMAGE = 'emna2023/emna-bouzouita-5gamix'
+        VERSION = "latest"
+        GIT_BRANCH = 'emna'
+    }
 
     stages {
         stage('Main') {
             steps {
-                // Compile the Spring Boot project
                 echo "Echo Test of Emna Branch"
             }
         }
 
-        stage('Build') {
+        stage('Build & Package') {
             steps {
-                // Check out the code from the repository
-                checkout scm
 
-                // Run Maven clean install
-                sh 'mvn clean package'
-            }
-        }
-stage('Run Unit Tests') {
-    steps {
-
-            script {
-                try {
-                    // Run the unit tests
-                    sh 'mvn clean test'
-
-                    // Generate the JaCoCo report after tests pass
-                    sh 'mvn jacoco:report'
-
-                    // Ensure that JaCoCo report generation is recognized by Jenkins
-                    jacoco execPattern: 'target/jacoco.exec'
-                } catch (Exception e) {
-                    // Mark the build as failed and provide an error message
-                    currentBuild.result = 'FAILURE'
-                    error "Tests failed or JaCoCo report generation failed: ${e.message}"
-                }
-            }
-        }
-
-}
-         stage('Deploy to Nexus') {
-                                 steps {
-
-                                         withCredentials([usernamePassword(credentialsId: 'nexus-credentials', passwordVariable: 'NEXUS_PASSWORD', usernameVariable: 'NEXUS_USERNAME')]) {
-                                             // Execute Maven deploy command
-                                             sh 'mvn deploy -Dusername=$NEXUS_USERNAME -Dpassword=$NEXUS_PASSWORD'
-                                         }
-                                     }
-
-                             }
-
-
-
-             stage('Scan') {
-                 steps {
-
-                         script {
-                             sh 'chmod +x ./mvnw'
-                         }
-                         withSonarQubeEnv('sonarqube') {
-                             sh '''./mvnw sonar:sonar \
-                               -Dsonar.java.binaries=target/classes \
-                               -Dsonar.jacoco.reportPaths=target/jacoco.exec'''
-                         }
-
-                 }
-             }
-
-       stage('Docker Build') {
-                steps {
                     script {
-                        echo 'Building Docker image...'
-                         // Ensure you're in the correct directory containing the Dockerfile
-                            sh "docker build -t emna2023/emna-bouzouita-5gamix:latest ."
+                        // Print current directory and list files
+                        sh 'pwd'
+                        sh 'ls -la' // List files in the current directory
 
+
+                    }
+                    // Build the project
+                    sh './mvnw clean package -DskipTests'
+
+            }
+        }
+
+        stage('Run Unit Tests') {
+            steps {
+                script {
+                    try {
+                        // Run the unit tests
+                        sh 'mvn clean test'
+
+                        // Generate the JaCoCo report after tests pass
+                        sh 'mvn jacoco:report'
+
+                        // Ensure that JaCoCo report generation is recognized by Jenkins
+                        jacoco execPattern: 'target/jacoco.exec'
+                    } catch (Exception e) {
+                        currentBuild.result = 'FAILURE'
+                        error "Tests failed or JaCoCo report generation failed: ${e.message}"
                     }
                 }
             }
-                stage('Push Docker Image') {
-                        steps {
-                            echo 'Pushing Docker image to DockerHub...'
-                            script {
-                                withCredentials([usernamePassword(credentialsId: 'dockerhubcredentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                                    sh 'echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin || exit 1'
-                                    sh 'docker push emna2023/emna-bouzouita-5gamix:latest'
-                                }
-                            }
-                        }
+        }
+
+        stage('Deploy to Nexus') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'nexus-credentials', passwordVariable: 'NEXUS_PASSWORD', usernameVariable: 'NEXUS_USERNAME')]) {
+                    // Deploy to Nexus Repository
+                    sh 'mvn deploy -Dusername=$NEXUS_USERNAME -Dpassword=$NEXUS_PASSWORD'
+                }
+            }
+        }
+
+        stage('Scan') {
+            steps {
+                script {
+                    sh 'chmod +x ./mvnw'
+                }
+                withSonarQubeEnv('sonarqube') {
+                    sh '''./mvnw sonar:sonar \
+                        -Dsonar.java.binaries=target/classes \
+                        -Dsonar.jacoco.reportPaths=target/jacoco.exec'''
+                }
+            }
+        }
+
+        stage('Docker Build') {
+            steps {
+                script {
+                    def imageTag = "${DOCKER_IMAGE}:${BUILD_NUMBER}"
+                    echo "Building Docker image ${imageTag}..."
+                    sh "docker build -t ${imageTag} ."
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'dockerhubcredentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        sh 'echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin || exit 1'
+                        def imageTag = "${DOCKER_IMAGE}:${BUILD_NUMBER}"
+                        sh "docker push ${imageTag}"
                     }
                 }
+            }
+        }
+    }
 
-post {
+    post {
         always {
             script {
                 def jobName = env.JOB_NAME
