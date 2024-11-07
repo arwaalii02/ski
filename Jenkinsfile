@@ -14,15 +14,12 @@ pipeline {
             }
         }
 
-        stage('SonarQube Analysis') {
+             stage('SonarQueb analysis') {
             steps {
-                // Run SonarQube analysis
-                echo 'Running SonarQube analysis...'
-                withSonarQubeEnv('SonarQube') {
-                    // Run SonarQube analysis using Maven or your specific build tool
-                    sh './mvnw sonar:sonar -Dsonar.host.url=${SONARQUBE_URL} -Dsonar.login=${SONARQUBE_TOKEN}'
-                }
+                echo 'Analyse de la Qualité du Code : ';
+                sh 'mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=69iSASxPosition?;
             }
+
         }
     }
 
