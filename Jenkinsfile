@@ -17,7 +17,7 @@ pipeline {
              stage('SonarQueb analysis') {
             steps {
                 echo 'Analyse de la Qualité du Code : ';
-                sh 'mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=69iSASxPosition?;
+                sh 'mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=69iSASxPosition?';
             }
 
         }
