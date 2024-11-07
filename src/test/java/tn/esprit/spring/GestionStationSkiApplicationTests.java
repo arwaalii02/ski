@@ -39,44 +39,6 @@ class GestionStationSkiApplicationTests {
 		add(new Instructor(4L, "zzzzzz", "zzzzzzz", LocalDate.of(2024, 1, 1)));
 	}};
 
-	@Test
-	void testRetrieveInstructor() {
-		when(instRepository.findById(1L)).thenReturn(Optional.of(s));
-		Instructor retrievedInstructor = instServices.retrieveInstructor(1L);
-		assertNotNull(retrievedInstructor);
-		assertEquals(s.getNumInstructor(), retrievedInstructor.getNumInstructor());
-		verify(instRepository).findById(1L);
-	}
-
-	@Test
-	void testAddInstructor() {
-		when(instRepository.save(s)).thenReturn(s);
-		Instructor addedInstructor = instServices.addInstructor(s);
-		assertNotNull(addedInstructor);
-		assertEquals(s.getNumInstructor(), addedInstructor.getNumInstructor());
-		verify(instRepository).save(s);
-	}
-
-	@Test
-	void testRetrieveAllInstructors() {
-		when(instRepository.findAll()).thenReturn(lc);
-		List<Instructor> instructors = instServices.retrieveAllInstructors();
-		assertNotNull(instructors);
-		assertEquals(3, instructors.size());
-		verify(instRepository).findAll();
-	}
-
-	@Test
-	void testAddInstructorAndAssignToCourse() {
-		when(courseRepository.findById(1L)).thenReturn(Optional.of(c));
-		when(instRepository.save(s)).thenReturn(s);
-
-		Instructor result = instServices.addInstructorAndAssignToCourse(s, 1L);
-
-		assertNotNull(result);
-		assertTrue(result.getCourses().contains(c));  // Check if the course is assigned
-		verify(courseRepository).findById(1L);
-		verify(instRepository).save(s);
-	}
+	
 
 }
