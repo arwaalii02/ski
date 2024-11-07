@@ -173,7 +173,7 @@ pipeline {
                 emailext (
                     subject: "Build Succeeded: ${env.JOB_NAME} - ${env.BUILD_NUMBER}",
                     body: emailBody,
-                    to: "kchoukaziz1@gmail.com",
+                    to: "amirboudidah1999@gmail.com",
                     mimeType: 'text/html'
                 )
             }
@@ -212,7 +212,7 @@ pipeline {
                 emailext (
                     subject: "Build Failed: ${env.JOB_NAME} - ${env.BUILD_NUMBER}",
                     body: emailBody,
-                    to: "kchoukaziz1@gmail.com",
+                    to: "amirboudidah1999@gmail.com",
                     mimeType: 'text/html'
                 )
             }
