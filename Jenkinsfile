@@ -24,15 +24,28 @@ pipeline {
                 sh 'mvn clean package'
             }
         }
-        stage('test') {
-                    steps {
-                        // Check out the code from the repository
-                        checkout scm
+stage('Run Unit Tests') {
+    steps {
 
-                        // Run Maven clean install
-                        sh 'mvn test'
-                    }
+            script {
+                try {
+                    // Run the unit tests
+                    sh 'mvn clean test'
+
+                    // Generate the JaCoCo report after tests pass
+                    sh 'mvn jacoco:report'
+
+                    // Ensure that JaCoCo report generation is recognized by Jenkins
+                    jacoco execPattern: 'target/jacoco.exec'
+                } catch (Exception e) {
+                    // Mark the build as failed and provide an error message
+                    currentBuild.result = 'FAILURE'
+                    error "Tests failed or JaCoCo report generation failed: ${e.message}"
                 }
+            }
+        }
+
+}
          stage('Deploy to Nexus') {
                                  steps {
 
