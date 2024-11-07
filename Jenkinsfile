@@ -108,7 +108,14 @@ stage('Docker-Compose') {
         sh 'docker compose up -d'
     }
 }
-
+stage('Integration Test') {
+            steps {
+                script {
+                    echo 'Running integration tests inside the app container...'
+                    sh 'docker exec -it gestion-station-ski-container mvn -Dtest=DatabaseIntegrationTest test'
+                }
+            }
+        }
 
     }
 }
