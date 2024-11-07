@@ -32,15 +32,14 @@ pipeline {
         stage('Run Unit Tests') {
             steps {
                 script {
-                    // Run tests and generate the JaCoCo report
-                    try {
-                        sh './mvnw clean test jacoco:report'
-                        // Ensure that JaCoCo report generation is recognized by Jenkins
-                        jacoco execPattern: 'target/jacoco.exec'
-                    } catch (Exception e) {
-                        currentBuild.result = 'FAILURE'
-                        error "Tests failed or JaCoCo report generation failed: ${e.message}"
-                    }
+                    sh './mvnw clean test'
+                }
+            }
+        }
+        stage('Generate Code Coverage Report') {
+            steps {
+                script {
+                    sh './mvnw jacoco:report'
                 }
             }
         }
