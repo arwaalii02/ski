@@ -48,5 +48,15 @@ class GestionStationSkiApplicationTests {
 		verify(instRepository).findById(1L);
 	}
 
+	@Test
+	void testAddInstructor() {
+		when(instRepository.save(s)).thenReturn(s);
+		Instructor addedInstructor = instServices.addInstructor(s);
+		assertNotNull(addedInstructor);
+		assertEquals(s.getNumInstructor(), addedInstructor.getNumInstructor());
+		verify(instRepository).save(s);
+	}
+
+
 
 }
