@@ -1,34 +1,3 @@
-/* def getEmailBody(color, status) {
-        def successStages = currentBuild.description.readLines().findAll { it.endsWith('✅') }
-        def failedStages = currentBuild.description.readLines().findAll { it.endsWith('❌') }
-
-        def statusText = status == 'SUCCESSFUL' ? 'Success' : 'Failure'
-        def emailBody = """
-        <html>
-            <body>
-                <h2 style="color: ${color};">Build ${statusText}!</h2>
-                <p>The build <b>${env.BUILD_NUMBER}</b> for Job <b>${env.JOB_NAME}</b> ${status.toLowerCase()}.</p>
-                <p><strong>Build URL:</strong> <a href='${env.BUILD_URL}'>${env.BUILD_URL}</a></p>
-                <p><strong>Build Duration:</strong> ${currentBuild.durationString}</p>
-                <table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse; width: 100%;">
-                    <thead>
-                        <tr>
-                            <th style="text-align: left;">Stage</th>
-                            <th style="text-align: left;">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${successStages ? successStages.join('<br>') : 'No successful stages.'}
-                        ${failedStages ? failedStages.join('<br>') : 'No failed stages.'}
-                    </tbody>
-                </table>
-                <br/>
-                <p>Best regards,<br/>Jenkins</p>
-            </body>
-        </html>
-        """
-        return emailBody
-    } */
 pipeline {
     agent any
     environment {
@@ -171,24 +140,6 @@ pipeline {
         }
 
     }
-    /* post {
-        success {
-            emailext (
-                subject: "Build Succeeded: ${env.JOB_NAME} - ${env.BUILD_NUMBER}",
-                body: getEmailBody("green", "SUCCESSFUL"),
-                to: "amirboudidah1999@gmail.com",
-                mimeType: 'text/html'
-            )
-        }
-        failure {
-            emailext (
-                subject: "Build Failed: ${env.JOB_NAME} - ${env.BUILD_NUMBER}",
-                body: getEmailBody("red", "FAILED"),
-                to: "amirboudidah1999@gmail.com",
-                mimeType: 'text/html'
-            )
-        }
-    } */
     post {
         success {
             emailext(
@@ -205,6 +156,4 @@ pipeline {
             )
         }
     }
-
-
  }
