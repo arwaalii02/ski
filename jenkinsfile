@@ -77,15 +77,20 @@ pipeline {
         }
     }
     post {
-        always {
-            echo 'Executing post-cleanup tasks, if any.'
-            // Add any actual cleanup commands here if needed, such as stopping services.
-        }
         success {
-            echo 'Pipeline completed successfully!'
+            emailext(
+                subject: "Build Succeeded: ${env.JOB_NAME} - ${env.BUILD_NUMBER}",
+                body: "The build ${env.BUILD_NUMBER} for job ${env.JOB_NAME} has succeeded.",
+                to: "kchoukaziz1@gmail.com"
+            )
         }
         failure {
-            echo 'Pipeline failed.'
+            emailext(
+                subject: "Build Failed: ${env.JOB_NAME} - ${env.BUILD_NUMBER}",
+                body: "The build ${env.BUILD_NUMBER} for job ${env.JOB_NAME} has failed.",
+                to: "kchoukaziz1@gmail.com"
+            )
         }
     }
+
 }
