@@ -75,6 +75,17 @@ pipeline {
                 }
             }
         }
+        stage('Test Email') {
+            steps {
+                script {
+                    emailext(
+                        subject: "Test",
+                        body: "This is a test email.",
+                            to: "amirboudidah1999@gmail.com"
+                        )
+                    }
+                }
+            }
     }
     post {
         success {
