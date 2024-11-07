@@ -82,7 +82,6 @@ pipeline {
             steps {
                 script {
                     try {
-                        sh 'mvn gfdwsg'
                         sh 'mvn clean deploy -DskipTests'
                         currentBuild.description = (currentBuild.description ?: '') + "Deploy to Nexus: ✅\n"
                     } catch (Exception e) {
