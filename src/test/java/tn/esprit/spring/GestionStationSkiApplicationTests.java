@@ -46,5 +46,6 @@ class GestionStationSkiApplicationTests {
 		assertEquals(s.getNumInstructor(), retrievedInstructor.getNumInstructor());
 		verify(instRepository).findById(1L);
 	}
+
 }
  

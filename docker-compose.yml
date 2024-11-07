@@ -14,7 +14,7 @@ services:
     networks:
       - mynetwork
   gestion-station:
-    image: boudidahamir/gestion-station-ski:1.0
+    image: boudidahamir/gestion-station-ski:latest
     depends_on:
       - mysqldb
     restart: on-failure
