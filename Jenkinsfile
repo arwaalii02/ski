@@ -111,8 +111,8 @@ stage('Docker-Compose') {
 stage('Integration Test') {
             steps {
                 script {
-                    echo 'Running integration tests inside the app container...'
-                    sh 'docker exec -it gestion-station-ski-container mvn -Dtest=DatabaseIntegrationTest test'
+                    echo 'Running database integration tests in the app container...'
+                    sh 'docker exec -it $(docker ps -q -f ancestor=ahmedharleyy/ski-image:1.0.0) mvn -Dtest=DatabaseIntegrationTest test'
                 }
             }
         }
