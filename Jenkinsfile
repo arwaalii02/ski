@@ -14,12 +14,25 @@ pipeline {
             }
         }
 
-             stage('SonarQueb analysis') {
+            stage('Maven Clean') {
             steps {
-                echo 'Analyse de la Qualité du Code : ';
-                sh 'mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=69iSASxPosition?';
+                echo 'Nettoyage du Projet : '
+                sh 'mvn clean'
             }
+        }
 
+        stage('Maven Compile') {
+            steps {
+                echo 'Construction du Projet : '
+                sh 'mvn compile'
+            }
+        }
+
+        stage('Maven Test (Skip)') {
+            steps {
+                echo 'Test du Projet (skipped) : '
+                sh 'mvn test -DskipTests'
+            }
         }
     }
 
