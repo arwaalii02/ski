@@ -4,6 +4,7 @@ pipeline {
     environment {
         SONARQUBE_URL = 'http://192.168.50.4:9000'  // SonarQube URL
         SONARQUBE_TOKEN = credentials('sonarqube-token')  // Reference the SonarQube token stored in Jenkins credentials
+        SONAR_PROJECT_KEY = 'registration-ski'
     }
 
     stages {
@@ -33,15 +34,6 @@ pipeline {
                 echo 'Test du Projet (skipped) : '
                 sh 'mvn test -DskipTests'
             }
-        }
-    }
-
-    post {
-        success {
-            echo 'Build succeeded!'
-        }
-        failure {
-            echo 'Build failed!'
         }
     }
 }
