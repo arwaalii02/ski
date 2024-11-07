@@ -13,7 +13,7 @@ pipeline {
             }
         }
 
-        stage('compile') {
+        stage('Compile') {
             steps {
                 // Check out the code from the repository
                 checkout scm
@@ -22,11 +22,11 @@ pipeline {
             }
         }
 
-        stage('test') {
+        stage('Test') {
             steps {
                 // Check out the code from the repository
                 checkout scm
-                // Run Maven tests specifically for GestionStationSkiApplicationTests and DatabaseIntegrationTest
+                // Run Maven tests specifically for GestionStationSkiApplicationTests
                 sh 'mvn -Dtest=GestionStationSkiApplicationTests test'
             }
         }
@@ -92,17 +92,19 @@ pipeline {
             steps {
                 echo 'Start Backend + DB:'
                 sh 'docker compose up -d'
+                // Wait for MySQL to be ready before running the tests
+                sh 'sleep 20' // Adjust the time if needed
             }
         }
 
         stage('Integration Test') {
-    steps {
-        script {
-            echo 'Running database integration tests in the app container...'
-            // Ensure to run only the DatabaseIntegrationTest inside the container
-            sh 'docker exec -it $(docker ps -q -f ancestor=ahmedharleyy/ski-image:1.0.0) mvn -Dtest=DatabaseIntegrationTest test'
+            steps {
+                script {
+                    echo 'Running database integration tests in the app container...'
+                    // Ensure to run only the DatabaseIntegrationTest inside the container
+                    sh 'docker exec -it $(docker ps -q -f ancestor=ahmedharleyy/ski-image:1.0.0) mvn -Dtest=DatabaseIntegrationTest test'
+                }
+            }
         }
     }
-}
-}
 }
