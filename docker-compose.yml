@@ -60,6 +60,12 @@ services:
       - grafana_data:/var/lib/grafana
     depends_on:
       - prometheus
+  node-exporter:
+    image: prom/node-exporter:latest
+    ports:
+      - "9100:9100"
+    depends_on:
+      - springboot
 
 volumes:
   mysql_data:
