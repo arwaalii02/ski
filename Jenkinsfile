@@ -2,9 +2,9 @@ pipeline {
     agent any
     environment {
             NEXUS_URL = 'http://192.168.50.4:8081/repository/maven-releases/'
-            DOCKERHUB_CREDENTIALS = credentials('dockerhubcredentials')
             DOCKER_IMAGE = 'emna2023/emna-bouzouita-5gamix:latest'
             VERSION = "latest"
+            GIT_BRANCH = 'emna'
         }
 
     stages {
