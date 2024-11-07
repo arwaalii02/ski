@@ -22,6 +22,9 @@ pipeline {
                         sh 'pwd'
                         sh 'ls -la' // List files in the current directory
 
+                        // Change permission to make mvnw executable
+                        sh 'chmod +x ./mvnw'
+
 
                     }
                     // Build the project
