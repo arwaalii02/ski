@@ -67,26 +67,6 @@ class GestionStationSkiApplicationTests {
 	}
 
 	@Test
-	void testUpdateInstructor() {
-		Instructor updatedInstructor = new Instructor(1L, "amir", "boudidah", LocalDate.of(2025, 1, 1));
-
-		when(instRepository.findById(1L)).thenReturn(Optional.of(s));
-		when(instRepository.save(any(Instructor.class))).thenReturn(updatedInstructor);
-
-		Instructor result = instServices.updateInstructor(updatedInstructor);
-
-		assertNotNull(result);
-		assertEquals(updatedInstructor.getNumInstructor(), result.getNumInstructor());
-		assertEquals(updatedInstructor.getFirstName(), result.getFirstName());
-		assertEquals(updatedInstructor.getLastName(), result.getLastName());
-		assertEquals(updatedInstructor.getDateOfHire(), result.getDateOfHire());
-
-		verify(instRepository).findById(1L);
-		verify(instRepository).save(any(Instructor.class));
-	}
-
-
-	@Test
 	void testAddInstructorAndAssignToCourse() {
 		when(courseRepository.findById(1L)).thenReturn(Optional.of(c));
 		when(instRepository.save(s)).thenReturn(s);

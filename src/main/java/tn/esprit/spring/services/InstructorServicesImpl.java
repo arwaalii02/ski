@@ -30,18 +30,8 @@
 
         @Override
         public Instructor updateInstructor(Instructor instructor) {
-            Instructor existingInstructor = instructorRepository.findById(instructor.getNumInstructor()).orElse(null);
-
-            if (existingInstructor != null) {
-                existingInstructor.setFirstName(instructor.getFirstName());
-                existingInstructor.setLastName(instructor.getLastName());
-                existingInstructor.setDateOfHire(instructor.getDateOfHire());
-                return instructorRepository.save(existingInstructor);
-            }
-
-            return null;
+            return instructorRepository.save(instructor);
         }
-
 
         @Override
         public Instructor retrieveInstructor(Long numInstructor) {
