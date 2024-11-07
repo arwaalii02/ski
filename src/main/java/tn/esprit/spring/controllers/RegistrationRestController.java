@@ -34,7 +34,7 @@ public class RegistrationRestController {
     }
 
 
-    @Operation(description = "Add Registration and Assign to Skier and Course")
+    @Operation(description = "Add Registration and Assign to Skier and 1")
     @PutMapping("/addAndAssignToSkierAndCourse/{numSkieur}/{numCourse}")
     public Registration addAndAssignToSkierAndCourse(@RequestBody Registration registration,
                                                      @PathVariable("numSkieur") Long numSkieur,
