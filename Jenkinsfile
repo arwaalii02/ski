@@ -92,8 +92,23 @@ pipeline {
             steps {
                 echo 'Start Backend + DB:'
                 sh 'docker compose up -d'
-                // Wait for MySQL to be ready before running the tests
-                sh 'sleep 20' // Adjust the time if needed
+                
+                // Wait for MySQL to be ready by checking the logs or running a command
+                script {
+                    def mysqlReady = false
+                    for (int i = 0; i < 20; i++) {
+                        def result = sh(script: 'docker exec -i $(docker ps -q -f name=mysql-container) mysqladmin ping -h localhost', returnStatus: true)
+                        if (result == 0) {
+                            mysqlReady = true
+                            break
+                        }
+                        sleep 10
+                    }
+                    
+                    if (!mysqlReady) {
+                        error 'MySQL is not ready after waiting for 200 seconds.'
+                    }
+                }
             }
         }
 
