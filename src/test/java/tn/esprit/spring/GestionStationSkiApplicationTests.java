@@ -1,4 +1,5 @@
 package tn.esprit.spring;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -13,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -26,17 +26,13 @@ class GestionStationSkiApplicationTests {
 	@InjectMocks
 	InstructorServicesImpl instServices;
 
-	Instructor s = new Instructor(1L,"amir","boudidah",LocalDate.of(2024, 1, 1));
+	Instructor s = new Instructor(1L, "amir", "boudidah", LocalDate.of(2024, 1, 1));
 
-
-	List<Instructor> lc = new ArrayList<Instructor>()
-	{{
-		add(new Instructor(2L,"rayen","alelmi",LocalDate.of(2024, 1, 1)));
-		add(new Instructor(3L,"kkkkk","vvvvvv",LocalDate.of(2024, 1, 1)));
-		add(new Instructor(4L,"zzzzzz","zzzzzzz",LocalDate.of(2024, 1, 1)));
-
+	List<Instructor> lc = new ArrayList<Instructor>() {{
+		add(new Instructor(2L, "rayen", "alelmi", LocalDate.of(2024, 1, 1)));
+		add(new Instructor(3L, "kkkkk", "vvvvvv", LocalDate.of(2024, 1, 1)));
+		add(new Instructor(4L, "zzzzzz", "zzzzzzz", LocalDate.of(2024, 1, 1)));
 	}};
-
 
 	@Test
 	void testRetrieveInstructor() {
@@ -47,5 +43,38 @@ class GestionStationSkiApplicationTests {
 		verify(instRepository).findById(1L);
 	}
 
+	@Test
+	void testAddInstructor() {
+		when(instRepository.save(s)).thenReturn(s);
+		Instructor addedInstructor = instServices.addInstructor(s);
+		assertNotNull(addedInstructor);
+		assertEquals(s.getNumInstructor(), addedInstructor.getNumInstructor());
+		verify(instRepository).save(s);
+	}
+
+	@Test
+	void testRetrieveAllInstructors() {
+		when(instRepository.findAll()).thenReturn(lc);
+		List<Instructor> instructors = instServices.retrieveAllInstructors();
+		assertNotNull(instructors);
+		assertEquals(3, instructors.size());
+		verify(instRepository).findAll();
+	}
+
+	@Test
+	void testUpdateInstructor() {
+		Instructor updatedInstructor = new Instructor(1L, "amir", "boudidah", LocalDate.of(2025, 1, 1));
+		when(instRepository.findById(1L)).thenReturn(Optional.of(s));
+		when(instRepository.save(updatedInstructor)).thenReturn(updatedInstructor);
+
+		Instructor result = instServices.updateInstructor(updatedInstructor);
+
+		assertNotNull(result);
+		assertEquals(updatedInstructor.getNumInstructor(), result.getNumInstructor());
+		assertEquals(updatedInstructor.getLastName(), result.getLastName());
+		verify(instRepository).findById(1L);
+		verify(instRepository).save(updatedInstructor);
+	}
+	
+
 }
- 
