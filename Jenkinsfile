@@ -37,11 +37,10 @@ pipeline {
             steps {
                 script {
                     try {
-                        // Run the unit tests
-                        sh 'mvn clean test'
+
 
                         // Generate the JaCoCo report after tests pass
-                        sh 'mvn jacoco:report'
+                         sh 'mvn clean test jacoco:report'
 
                         // Ensure that JaCoCo report generation is recognized by Jenkins
                         jacoco execPattern: 'target/jacoco.exec'
