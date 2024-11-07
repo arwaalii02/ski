@@ -10,7 +10,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 // Checkout the project from GitHub
-                git branch: 'sahbikh', url: 'https://github.com/arwaalii02/ski.git'
+                git branch: 'sahbi', url: 'https://github.com/arwaalii02/ski.git'
             }
         }
 
