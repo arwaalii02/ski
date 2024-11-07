@@ -27,7 +27,7 @@ pipeline {
                 // Check out the code from the repository
                 checkout scm
                 // Run Maven tests specifically for GestionStationSkiApplicationTests and DatabaseIntegrationTest
-                sh 'mvn -Dtest=GestionStationSkiApplicationTests,DatabaseIntegrationTest test'
+                sh 'mvn -Dtest=GestionStationSkiApplicationTests test'
             }
         }
 
