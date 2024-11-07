@@ -96,7 +96,6 @@ pipeline {
             steps {
                 script {
                     try {
-                        sh "docker sqdgsdf"
                         sh "docker build -t ${DOCKER_IMAGE} ."
                         currentBuild.description = (currentBuild.description ?: '') + "Build Docker Image: ✅\n"
                     } catch (Exception e) {
