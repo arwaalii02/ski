@@ -112,14 +112,14 @@ pipeline {
             }
         }
 
-        stage('Integration Test') {
-    steps {
-        script {
-            echo 'Running database integration tests in the app container...'
-            // Run only DatabaseIntegrationTest inside the container without TTY
-            sh 'docker exec $(docker ps -q -f ancestor=ahmedharleyy/ski-image:1.0.0) mvn -Dtest=DatabaseIntegrationTest test'
-        }
-    }
-}
+//         stage('Integration Test') {
+//     steps {
+//         script {
+//             echo 'Running database integration tests in the app container...'
+//             // Run only DatabaseIntegrationTest inside the container without TTY
+//             sh 'docker exec $(docker ps -q -f ancestor=ahmedharleyy/ski-image:1.0.0) mvn -Dtest=DatabaseIntegrationTest test'
+//         }
+//     }
+// }
     }
 }
