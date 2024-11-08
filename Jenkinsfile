@@ -42,5 +42,26 @@ pipeline {
                 sh 'mvn test'
             }
         }
+         stage('Nexus Deploy') {
+            steps {
+                echo 'Création du livrable : '
+                sh 'mvn package -DskipTests'
+            }
+        }
+        
+        stage('Image') {
+            steps {
+                echo 'Création Image :'
+                sh 'docker build -t sahbikhilfaoui/gestion-station-ski-image:1.0.0 .'
+            }
+        }
+
+        stage('Dockerhub') {
+            steps {
+                echo 'Push Image to Docker Hub...'
+                sh 'docker login -u sahbikhilfaoui -p 69iSASxPosition69'
+                sh 'docker push sahbikhilfaoui/gestion-station-ski-image:1.0.0'
+            }
+        }
     }
 }
