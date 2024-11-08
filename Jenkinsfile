@@ -54,71 +54,51 @@ pipeline {
             }
         }
 
-        stage('Image') {
+        stage('Build Docker Image') {
             steps {
                 script {
-                    def imageExists = sh(
-                        script: "docker manifest inspect ahmedharleyy/ski-image:1.0.0 > /dev/null 2>&1",
-                        returnStatus: true
-                    ) == 0
-
-                    if (!imageExists) {
-                        echo 'Building Image:'
-                        sh 'docker build -t ahmedharleyy/ski-image:1.0.0 .'
-                        slackSend(channel: env.SLACK_CHANNEL, message: "Docker image built.", color: "#00FF00")
-                    } else {
-                        echo 'Image already exists, skipping build.'
+                    try {
+                        sh "docker build -t ${DOCKER_IMAGE} ."
+                        currentBuild.description = (currentBuild.description ?: '') + "Build Docker Image: ✅\n"
+                    } catch (Exception e) {
+                        currentBuild.description = (currentBuild.description ?: '') + "Build Docker Image: ❌\n"
+                        throw e
                     }
                 }
             }
         }
 
-        stage('Dockerhub') {
+        stage('Push Docker Image') {
             steps {
                 script {
-                    def imageExists = sh(
-                        script: "docker manifest inspect ahmedharleyy/ski-image:1.0.0 > /dev/null 2>&1",
-                        returnStatus: true
-                    ) == 0
-
-                    if (!imageExists) {
-                        echo 'Pushing Image to Docker Hub:'
-                        sh 'docker login -u ahmedharleyy -p Aghx?2001'
-                        sh 'docker push ahmedharleyy/ski-image:1.0.0'
-                        slackSend(channel: env.SLACK_CHANNEL, message: "Image pushed to Docker Hub.", color: "#00FF00")
-                    } else {
-                        echo 'Image already exists on Docker Hub, skipping push.'
-                    }
-                }
-            }
-        }
-
-        stage('Docker-Compose') {
-            steps {
-                echo 'Start Backend + DB:'
-                sh 'docker compose up -d'
-
-                script {
-                    def mysqlReady = false
-                    for (int i = 0; i < 20; i++) {
-                        def result = sh(script: 'docker exec -i $(docker ps -q -f name=mysql-container) mysqladmin ping -h localhost', returnStatus: true)
-                        if (result == 0) {
-                            mysqlReady = true
-                            break
+                    try {
+                        withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+                            sh(returnStatus: true, script: "echo \$DOCKER_PASSWORD | docker login -u \$DOCKER_USERNAME --password-stdin")
                         }
-                        sleep 10
+                        sh "docker push ${DOCKER_IMAGE}"
+                        currentBuild.description = (currentBuild.description ?: '') + "Push Docker Image: ✅\n"
+                    } catch (Exception e) {
+                        currentBuild.description = (currentBuild.description ?: '') + "Push Docker Image: ❌\n"
+                        throw e
                     }
+                }
+            }
+        }
 
-                    if (!mysqlReady) {
-                        error 'MySQL is not ready after waiting for 200 seconds.'
-                    } else {
-                        slackSend(channel: env.SLACK_CHANNEL, message: "Docker-Compose started successfully.", color: "#00FF00")
+        stage('Run Docker Compose') {
+            steps {
+                script {
+                    try {
+                        sh 'docker-compose up -d'
+                        currentBuild.description = (currentBuild.description ?: '') + "Run Docker Compose: ✅\n"
+                    } catch (Exception e) {
+                        currentBuild.description = (currentBuild.description ?: '') + "Run Docker Compose: ❌\n"
+                        throw e
                     }
                 }
             }
         }
     }
-
    post {
     success {
         slackSend(channel: env.SLACK_CHANNEL, message: "Pipeline completed successfully.", color: 'good')
