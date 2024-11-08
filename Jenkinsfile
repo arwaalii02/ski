@@ -4,7 +4,7 @@ pipeline {
     environment {
         DOCKER_CREDENTIALS_ID = 'docker-hub-credentials'
         DOCKER_IMAGE = 'ahmedharleyy/ski'
-        SLACK_CHANNEL = '#your-slack-channel' // Replace with your Slack channel
+        SLACK_CHANNEL = '#devops' // Replace with your Slack channel
     }
 
     stages {
@@ -121,10 +121,10 @@ pipeline {
 
     post {
         success {
-            slackSend(channel: '#devops', message: "Pipeline completed successfully.", color: 'good')
+            slackSend(channel: env.SLACK_CHANNEL, message: "Pipeline completed successfully.", color: 'good')
         }
         failure {
-            slackSend(channel: '#devops', message: "Build failed: ${env.BUILD_URL}, color: 'danger')
+            slackSend(channel: env.SLACK_CHANNEL, message: "Build failed: ${env.BUILD_URL}, color: 'danger')
         }
     }
 }
