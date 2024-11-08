@@ -57,13 +57,8 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    try {
-                        sh "docker build -t ${DOCKER_IMAGE} ."
-                        currentBuild.description = (currentBuild.description ?: '') + "Build Docker Image: ✅\n"
-                    } catch (Exception e) {
-                        currentBuild.description = (currentBuild.description ?: '') + "Build Docker Image: ❌\n"
-                        throw e
-                    }
+                    sh "docker build -t ${DOCKER_IMAGE} ."
+                  
                 }
             }
         }
@@ -71,16 +66,11 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
-                    try {
-                        withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+                     withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
                             sh(returnStatus: true, script: "echo \$DOCKER_PASSWORD | docker login -u \$DOCKER_USERNAME --password-stdin")
                         }
                         sh "docker push ${DOCKER_IMAGE}"
-                        currentBuild.description = (currentBuild.description ?: '') + "Push Docker Image: ✅\n"
-                    } catch (Exception e) {
-                        currentBuild.description = (currentBuild.description ?: '') + "Push Docker Image: ❌\n"
-                        throw e
-                    }
+                   
                 }
             }
         }
