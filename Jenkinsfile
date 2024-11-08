@@ -35,5 +35,11 @@ pipeline {
                 sh 'mvn test -DskipTests'
             }
         }
+         stage('SonarQueb analysis') {
+            steps {
+                echo 'Analyse de la Qualité du Code : ';
+                sh 'mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=69iSASxPosition?';
+            }
+        }
     }
 }
