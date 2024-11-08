@@ -29,12 +29,7 @@ pipeline {
             }
         }
 
-        stage('Maven Test (Skip)') {
-            steps {
-                echo 'Test du Projet (skipped) : '
-                sh 'mvn test -DskipTests'
-            }
-        }
+        
          stage('SonarQueb analysis') {
             steps {
                 echo 'Analyse de la Qualité du Code : ';
