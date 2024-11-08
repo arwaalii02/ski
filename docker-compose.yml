@@ -14,7 +14,7 @@ services:
     networks:
       - mynetwork
   gestion-station:
-    image: ahmedharleyy/ski-image:latest
+    image: ahmedharleyy/ski-image:1.0
     depends_on:
       - mysqldb
     restart: on-failure
