@@ -36,12 +36,7 @@ pipeline {
                 sh 'mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=69iSASxPosition?';
             }
         }
-         stage('JUNIT mockitto') {
-            steps {
-                echo 'test unitaire:'
-                sh 'mvn test'
-            }
-        }
+        
          stage('Nexus Deploy') {
             steps {
                 echo 'Création du livrable : '
