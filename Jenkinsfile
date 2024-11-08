@@ -78,13 +78,8 @@ pipeline {
         stage('Run Docker Compose') {
             steps {
                 script {
-                    try {
-                        sh 'docker-compose up -d'
-                        currentBuild.description = (currentBuild.description ?: '') + "Run Docker Compose: ✅\n"
-                    } catch (Exception e) {
-                        currentBuild.description = (currentBuild.description ?: '') + "Run Docker Compose: ❌\n"
-                        throw e
-                    }
+                     sh 'docker-compose up -d'
+                   
                 }
             }
         }
