@@ -121,7 +121,7 @@ pipeline {
 
     post {
         success {
-            slackSend(channel: '#devops', message: "Pipeline completed successfully.", color: 'green')
+            slackSend(channel: '#devops', message: "Pipeline completed successfully.", color: 'good')
         }
         failure {
             slackSend(channel: '#devops', message: "Build failed: ${env.BUILD_URL}, color: 'danger')
