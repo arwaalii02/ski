@@ -119,13 +119,13 @@ pipeline {
         }
     }
 
-    post {
-        success {
-            slackSend(channel: env.SLACK_CHANNEL, message: "Pipeline completed successfully.", color: 'good')
-        }
-        failure {
-            slackSend(channel: env.SLACK_CHANNEL, message: "Build failed: ${env.BUILD_URL}, color: 'danger')
-        }
+   post {
+    success {
+        slackSend(channel: env.SLACK_CHANNEL, message: "Pipeline completed successfully.", color: 'good')
     }
+    failure {
+        slackSend(channel: env.SLACK_CHANNEL, message: "Build failed: ${env.BUILD_URL}", color: 'danger')
+    }
+}
 }
 
