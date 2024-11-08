@@ -3,31 +3,31 @@ pipeline {
 
     environment {
         DOCKER_CREDENTIALS_ID = 'docker-hub-credentials'
-        DOCKER_IMAGE = 'ahmedharleyy/ski' // Replace with your image name
+        DOCKER_IMAGE = 'ahmedharleyy/ski'
+        SLACK_CHANNEL = '#your-slack-channel' // Replace with your Slack channel
     }
 
     stages {
         stage('Main') {
             steps {
                 echo "Echo Test of Ahmed Branch"
+                slackSend(channel: env.SLACK_CHANNEL, message: "Main stage started.", color: "#00FF00")
             }
         }
 
         stage('Compile') {
             steps {
-                // Check out the code from the repository
                 checkout scm
-                // Run Maven compile
                 sh 'mvn compile'
+                slackSend(channel: env.SLACK_CHANNEL, message: "Compile stage completed.", color: "#00FF00")
             }
         }
 
         stage('Test') {
             steps {
-                // Check out the code from the repository
                 checkout scm
-                // Run Maven tests specifically for GestionStationSkiApplicationTests
                 sh 'mvn -Dtest=GestionStationSkiApplicationTests test'
+                slackSend(channel: env.SLACK_CHANNEL, message: "Test stage completed.", color: "#00FF00")
             }
         }
 
@@ -36,18 +36,21 @@ pipeline {
                 withSonarQubeEnv('Sonarqube') {
                     sh 'mvn sonar:sonar'
                 }
+                slackSend(channel: env.SLACK_CHANNEL, message: "SonarQube analysis completed.", color: "#00FF00")
             }
         }
 
         stage('Build') {
             steps {
                 sh 'mvn clean package -DskipTests'
+                slackSend(channel: env.SLACK_CHANNEL, message: "Build stage completed.", color: "#00FF00")
             }
         }
 
         stage('Deploy to Nexus') {
             steps {
                 sh 'mvn clean deploy -DskipTests'
+                slackSend(channel: env.SLACK_CHANNEL, message: "Deployed to Nexus.", color: "#00FF00")
             }
         }
 
@@ -62,6 +65,7 @@ pipeline {
                     if (!imageExists) {
                         echo 'Building Image:'
                         sh 'docker build -t ahmedharleyy/ski-image:1.0.0 .'
+                        slackSend(channel: env.SLACK_CHANNEL, message: "Docker image built.", color: "#00FF00")
                     } else {
                         echo 'Image already exists, skipping build.'
                     }
@@ -81,6 +85,7 @@ pipeline {
                         echo 'Pushing Image to Docker Hub:'
                         sh 'docker login -u ahmedharleyy -p Aghx?2001'
                         sh 'docker push ahmedharleyy/ski-image:1.0.0'
+                        slackSend(channel: env.SLACK_CHANNEL, message: "Image pushed to Docker Hub.", color: "#00FF00")
                     } else {
                         echo 'Image already exists on Docker Hub, skipping push.'
                     }
@@ -92,8 +97,7 @@ pipeline {
             steps {
                 echo 'Start Backend + DB:'
                 sh 'docker compose up -d'
-                
-                // Wait for MySQL to be ready by checking the logs or running a command
+
                 script {
                     def mysqlReady = false
                     for (int i = 0; i < 20; i++) {
@@ -104,22 +108,24 @@ pipeline {
                         }
                         sleep 10
                     }
-                    
+
                     if (!mysqlReady) {
                         error 'MySQL is not ready after waiting for 200 seconds.'
+                    } else {
+                        slackSend(channel: env.SLACK_CHANNEL, message: "Docker-Compose started successfully.", color: "#00FF00")
                     }
                 }
             }
         }
+    }
 
-//         stage('Integration Test') {
-//     steps {
-//         script {
-//             echo 'Running database integration tests in the app container...'
-//             // Run only DatabaseIntegrationTest inside the container without TTY
-//             sh 'docker exec $(docker ps -q -f ancestor=ahmedharleyy/ski-image:1.0.0) mvn -Dtest=DatabaseIntegrationTest test'
-//         }
-//     }
-// }
+    post {
+        success {
+            slackSend(channel: env.SLACK_CHANNEL, message: "Pipeline completed successfully.", color: "#36A64F")
+        }
+        failure {
+            slackSend(channel: env.SLACK_CHANNEL, message: "Pipeline failed.", color: "#FF0000")
+        }
     }
 }
+
