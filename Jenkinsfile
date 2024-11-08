@@ -37,12 +37,16 @@ pipeline {
             }
         }
         
-         stage('Nexus Deploy') {
-            steps {
-                echo 'Création du livrable : '
-                sh 'mvn package -DskipTests'
-            }
-        }
+        stage('Deploy to Nexus') {
+    steps {
+        // Deploy to Nexus Repository
+        sh '''
+            echo "Deploying to Nexus..."
+            mvn deploy -Dusername=admin -Dpassword=admin
+        '''
+    }
+}
+
         
        
     }
